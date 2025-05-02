@@ -1,7 +1,7 @@
 /** @format */
 
 import MenuType from "@/types/MenuType";
-import { BriefcaseBusinessIcon } from "lucide-react";
+import { BriefcaseBusinessIcon, Map } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { BsBook, BsHouseDoor, BsInfoLg } from "react-icons/bs";
 
@@ -34,6 +34,11 @@ const setAdminMenus = () => {
           href: adminUrl("/tempat/kecamatan"),
         },
       ],
+    },
+    {
+      name: "Lokasi Penjualan",
+      href: adminUrl("/lokasi-penjualan"),
+      icon: <Map />,
     },
     {
       name: "Kategori",

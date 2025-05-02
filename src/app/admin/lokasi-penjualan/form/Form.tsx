@@ -7,17 +7,19 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import BodyForm from "./BodyForm";
 import submitData from "@/services/submitData";
 import InputText from "@/components/input/InputText";
-import ModalDef from "@/components/modal/ModalDef";
-import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
 import { LokasiPenjualanType } from "@/types";
+import ModalDef from "@/components/modal/ModalDef";
+import UMKMLocationMap from "@/components/map/UMKMLocationMap";
+import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
+import { Toaster } from "react-hot-toast";
 
 type Props = {
   dtEdit: LokasiPenjualanType | null;
-  halaman: string;
 };
 
-const Form = ({ dtEdit, halaman }: Props) => {
-  const { addData, updateData } = useLokasiPenjualan();
+const Form = ({ dtEdit }: Props) => {
+  const { addData, updateData, dtLokasiPenjualan, setLokasiPenjualan } =
+    useLokasiPenjualan();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -39,6 +41,12 @@ const Form = ({ dtEdit, halaman }: Props) => {
     setValue("kecamatan", "");
     setValue("tlp_pengelola", "");
   };
+
+  useEffect(() => {
+    setLokasiPenjualan({
+      limit: 100,
+    });
+  }, []);
 
   useEffect(() => {
     if (dtEdit) {
@@ -67,8 +75,17 @@ const Form = ({ dtEdit, halaman }: Props) => {
     });
   };
 
+  // Fungsi untuk mengupdate koordinat dari peta
+  const handleLocationSelect = (lng: number, lat: number) => {
+    setValue("longitude", lng);
+    setValue("latitude", lat);
+  };
+
+  console.log({ dtLokasiPenjualan });
+
   return (
-    <ModalDef id="add_lokasi_penjualan" title={`Form ${halaman}`} size="lg">
+    <>
+      <Toaster />
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputText name="id" register={register} type="hidden" />
         <div className="grid grid-cols-8 gap-2 mb-4">
@@ -95,7 +112,17 @@ const Form = ({ dtEdit, halaman }: Props) => {
           )}
         </div>
       </form>
-    </ModalDef>
+      <ModalDef id="showMapUMKMLocation" title={`Tampilkan Peta`} size="lg">
+        <UMKMLocationMap
+          initialLat={-2.5919}
+          initialLng={140.6697}
+          enableDraggableMarker={true}
+          setValue={setValue}
+          onLocationSelect={handleLocationSelect}
+          lokasiPenjualan={dtLokasiPenjualan && dtLokasiPenjualan?.data}
+        />
+      </ModalDef>
+    </>
   );
 };
 

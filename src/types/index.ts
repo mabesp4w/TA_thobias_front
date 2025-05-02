@@ -44,6 +44,8 @@ export interface LokasiUMKMType {
   alamat_lengkap: string;
   kecamatan: string;
   kecamatan_detail: KecamatanType; // ForeignKey to Kecamatan
+  kabupaten_detail?: KabupatenType; // Optional (ForeignKey to Kabupaten)
+  provinsi_detail?: ProvinsiType; // Optional (ForeignKey to Provinsi)
   kode_pos?: string; // Optional
   tgl_update: string; // DateTime
 }
@@ -80,6 +82,8 @@ export interface LokasiPenjualanType {
   longitude?: number; // Optional
   kecamatan?: string; // Optional
   kecamatan_detail?: KecamatanType; // Optional (ForeignKey to Kecamatan)
+  kabupaten_detail?: KabupatenType; // Optional (ForeignKey to Kabupaten)
+  provinsi_detail?: ProvinsiType; // Optional (ForeignKey to Provinsi)
   tlp_pengelola?: string; // Optional
 }
 

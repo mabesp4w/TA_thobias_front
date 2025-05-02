@@ -7,6 +7,7 @@ const url_auth = `${BASE_URL}/auth`;
 const url_api = `${BASE_URL}/api`;
 const url_crud = `${BASE_URL}/crud`;
 const url_storage = `${BASE_URL}/storage`;
+const token_mapbox = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const auth = axios.create({
   baseURL: url_auth,
@@ -32,4 +33,5 @@ export {
   url_api,
   url_crud,
   url_storage,
+  token_mapbox,
 };

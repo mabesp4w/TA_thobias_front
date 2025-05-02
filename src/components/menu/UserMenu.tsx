@@ -63,7 +63,15 @@ const UserMenu = () => {
   ];
 
   const isActive = (href: string) => {
-    return pathname === href;
+    // Untuk halaman root, hanya cocokkan path yang tepat sama
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    // Untuk menu lain, periksa apakah pathname dimulai dengan href
+    // Ini akan membuat submenu seperti /lokasi-penjualan/form tetap menjaga
+    // menu lokasi-penjualan tetap aktif
+    return pathname.startsWith(href);
   };
 
   return (
