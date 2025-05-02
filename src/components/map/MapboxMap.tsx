@@ -40,6 +40,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   >("pending");
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
+  console.log("Mapbox token:", mapLoaded);
+
   // Debugging token
   useEffect(() => {
     if (!MAPBOX_TOKEN) {
@@ -222,6 +224,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           console.log("Marker dibuat melalui klik pada:", [
             e.lngLat.lng,
             e.lngLat.lat,
+            marker.getLngLat(),
           ]);
         }
 

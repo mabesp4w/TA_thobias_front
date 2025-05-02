@@ -2,12 +2,12 @@
 
 import InputText from "@/components/input/InputText";
 import { ProdukTerjualType } from "@/types";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { FieldErrors } from "react-hook-form";
-import useProduk from "@/stores/crud/Produk";
-import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
 import SelectFromDb from "@/components/select/SelectFromDB";
 import InputTextarea from "@/components/input/InputTextarea";
+import useProdukUMKM from "@/stores/crud/ProdukUMKM";
+import useLokasiPenjualanApi from "@/stores/api/LokasiPenjualan";
 
 type Props = {
   register: any;
@@ -18,45 +18,19 @@ type Props = {
   setValue: any;
 };
 
-const BodyForm: FC<Props> = ({
-  register,
-  errors,
-  control,
-  watch,
-  setValue,
-  dtEdit,
-}) => {
-  const { setProduk, dtProduk } = useProduk();
-  const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualan();
+const BodyForm: FC<Props> = ({ register, errors, control, watch }) => {
+  // store
+  const { setProduk, dtProduk } = useProdukUMKM();
+  const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualanApi();
+  // state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch produk dan lokasi penjualan
+    setIsLoading(true);
     setProduk({ page: 1, limit: 100 });
-    setLokasiPenjualan({ page: 1, limit: 100 });
+    setLokasiPenjualan();
+    setIsLoading(false);
   }, []);
-
-  const optionsProduk = dtProduk?.data?.map((item: any) => ({
-    value: item.id,
-    label: `${item.nm_produk} - Rp ${item.harga}`,
-  }));
-
-  const optionsLokasiPenjualan = dtLokasiPenjualan?.data?.map((item: any) => ({
-    value: item.id,
-    label: `${item.nm_lokasi} (${item.tipe_lokasi})`,
-  }));
-
-  // Auto-fill harga jual ketika produk dipilih
-  const selectedProdukId = watch("produk_id");
-  useEffect(() => {
-    if (selectedProdukId && !dtEdit) {
-      const selectedProduk = dtProduk?.data?.find(
-        (item: any) => item.id === selectedProdukId
-      );
-      if (selectedProduk) {
-        setValue("harga_jual", selectedProduk.harga);
-      }
-    }
-  }, [selectedProdukId, dtProduk, setValue, dtEdit]);
 
   return (
     <>
@@ -70,25 +44,35 @@ const BodyForm: FC<Props> = ({
         errors={errors.tgl_penjualan}
       />
 
-      <SelectFromDb
-        label="Produk"
-        name="produk_id"
-        control={control}
-        options={optionsProduk}
-        addClass="col-span-4"
-        required
-        errors={errors.produk_id}
-      />
+      {!isLoading && dtProduk?.data?.length > 0 && (
+        <SelectFromDb
+          label="Produk"
+          name="produk"
+          control={control}
+          dataDb={dtProduk?.data}
+          body={["id", "nm_produk"]}
+          addClass="col-span-4"
+          required
+          errors={errors.produk}
+          menuPosition="absolute"
+          placeholder="Pilih Produk"
+        />
+      )}
 
-      <SelectFromDb
-        label="Lokasi Penjualan"
-        name="lokasi_penjualan_id"
-        control={control}
-        options={optionsLokasiPenjualan}
-        addClass="col-span-8"
-        required
-        errors={errors.lokasi_penjualan_id}
-      />
+      {!isLoading && dtLokasiPenjualan?.length > 0 && (
+        <SelectFromDb
+          label="Lokasi Penjualan"
+          name="lokasi_penjualan"
+          control={control}
+          dataDb={dtLokasiPenjualan}
+          body={["id", "nm_lokasi"]}
+          addClass="col-span-8"
+          required
+          errors={errors.lokasi_penjualan}
+          menuPosition="absolute"
+          placeholder="Pilih Lokasi Penjualan"
+        />
+      )}
 
       <InputText
         label="Jumlah Terjual"
@@ -96,6 +80,8 @@ const BodyForm: FC<Props> = ({
         register={register}
         addClass="col-span-4"
         required
+        type="number"
+        valueAsNumber
         errors={errors.jumlah_terjual}
       />
 
@@ -125,9 +111,6 @@ const BodyForm: FC<Props> = ({
         register={register}
         addClass="col-span-8"
         errors={errors.catatan}
-        required={true}
-        minLength={10}
-        maxLength={500}
         placeholder="Masukkan deskripsi..."
         rows={6}
       />

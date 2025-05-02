@@ -48,8 +48,8 @@ import { LokasiPenjualanType, LokasiUMKMType } from "@/types";
 mapboxgl.accessToken = token_mapbox;
 
 const UMKMLocationMap: React.FC<MapProps> = ({
-  initialLng = 106.8456, // Default ke Jakarta
-  initialLat = -6.2088,
+  initialLng = 140.6697, // Default ke jayapura
+  initialLat = -2.5919,
   initialZoom = 10,
   initialMapStyle = "mapbox://styles/mapbox/streets-v11",
   width = "100%",

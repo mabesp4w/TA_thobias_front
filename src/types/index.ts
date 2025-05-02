@@ -89,8 +89,10 @@ export interface LokasiPenjualanType {
 
 export interface ProdukTerjualType {
   id: string; // UUID
-  produk: ProdukType; // ForeignKey to Produk
-  lokasi_penjualan: LokasiPenjualanType; // ForeignKey to LokasiPenjualan
+  produk: string;
+  produk_detail: ProdukType;
+  lokasi_penjualan: string;
+  lokasi_penjualan_detail: LokasiPenjualanType;
   tgl_penjualan: string; // Date
   jumlah_terjual: number; // PositiveIntegerField
   harga_jual: number; // DecimalField

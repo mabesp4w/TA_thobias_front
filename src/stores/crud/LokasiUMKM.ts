@@ -23,8 +23,8 @@ type Store = {
 
   setLokasiUMKM: ({ page, limit, search, sortby, order }: Props) => Promise<{
     status: string;
-    data?: {};
-    error?: {};
+    data?: object;
+    error?: object;
   }>;
 };
 

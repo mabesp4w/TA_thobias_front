@@ -63,9 +63,8 @@ const Login = () => {
     setIsLoading(true);
     setError("");
     const res = await setLogin(row);
-    console.log(res);
     if (res?.error) {
-      setError(res?.error?.message);
+      setError(res?.error?.detail);
     } else {
       const { data } = res;
       Cookies.set("token", data.access_token, { expires: 7 });
@@ -84,6 +83,8 @@ const Login = () => {
       }, 1000);
     }
   };
+
+  console.log({ error });
   return (
     <div className="min-h-screen bg-1 bg-cover bg-center font-prompt">
       <div className="flex flex-col items-center min-h-screen justify-center backdrop-blur-sm bg-black/50 z-10">

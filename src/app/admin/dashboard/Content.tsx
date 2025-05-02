@@ -8,8 +8,6 @@ import {
   BiStore,
   BiPackage,
   BiLocationPlus,
-  BiGroup,
-  BiBarChart,
   BiLineChart,
 } from "react-icons/bi";
 import Link from "next/link";
@@ -26,14 +24,14 @@ const Content = () => {
       title: "Data Wilayah",
       description: "Kelola data provinsi, kabupaten, dan kecamatan",
       icon: <BiMap className="h-8 w-8" />,
-      href: "/admin/wilayah",
+      href: "/admin/tempat",
       color: "bg-blue-500",
     },
     {
       title: "Data UMKM",
       description: "Kelola data UMKM yang terdaftar",
       icon: <BiStore className="h-8 w-8" />,
-      href: "/admin/umkm",
+      href: "/admin/umkm/akun",
       color: "bg-green-500",
     },
     {
@@ -47,29 +45,23 @@ const Content = () => {
       title: "Lokasi UMKM",
       description: "Pemetaan lokasi UMKM di seluruh wilayah",
       icon: <BiLocationPlus className="h-8 w-8" />,
-      href: "/admin/pemetaan-umkm",
+      href: "/admin/umkm/pemetaan-umkm",
       color: "bg-orange-500",
     },
     {
-      title: "Analisis Penjualan",
-      description: "Analisis penjualan UMKM per wilayah",
-      icon: <BiBarChart className="h-8 w-8" />,
-      href: "/admin/analisis-penjualan",
-      color: "bg-red-500",
+      title: "Lokasi Penjualan",
+      description: "Pemetaan lokasi penjualan di seluruh wilayah",
+      icon: <BiLocationPlus className="h-8 w-8" />,
+      href: "/admin/lokasi-penjualan",
+      color: "bg-yellow-500",
     },
+
     {
       title: "Laporan Statistik",
       description: "Laporan statistik keseluruhan",
       icon: <BiLineChart className="h-8 w-8" />,
       href: "/admin/laporan-statistik",
       color: "bg-indigo-500",
-    },
-    {
-      title: "Pengguna Sistem",
-      description: "Kelola pengguna sistem",
-      icon: <BiGroup className="h-8 w-8" />,
-      href: "/admin/pengguna",
-      color: "bg-yellow-500",
     },
   ];
 

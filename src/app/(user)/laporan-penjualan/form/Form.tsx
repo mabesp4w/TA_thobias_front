@@ -8,9 +8,9 @@ import BodyForm from "./BodyForm";
 import submitData from "@/services/submitData";
 import InputText from "@/components/input/InputText";
 import ModalDef from "@/components/modal/ModalDef";
-import useProdukTerjual from "@/stores/crud/ProdukTerjual";
 import { ProdukTerjualType } from "@/types";
 import moment from "moment";
+import useProdukTerjualUMKM from "@/stores/crud/ProdukTerjualUMKM";
 
 type Props = {
   dtEdit: ProdukTerjualType | null;
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const Form = ({ dtEdit, halaman }: Props) => {
-  const { addData, updateData } = useProdukTerjual();
+  const { addData, updateData } = useProdukTerjualUMKM();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -32,8 +32,8 @@ const Form = ({ dtEdit, halaman }: Props) => {
 
   const resetForm = () => {
     setValue("id", "");
-    setValue("produk_id", "");
-    setValue("lokasi_penjualan_id", "");
+    setValue("produk", "");
+    setValue("lokasi_penjualan", "");
     setValue("tgl_penjualan", moment().format("YYYY-MM-DD"));
     setValue("jumlah_terjual", 0);
     setValue("harga_jual", 0);
@@ -43,8 +43,8 @@ const Form = ({ dtEdit, halaman }: Props) => {
   useEffect(() => {
     if (dtEdit) {
       setValue("id", dtEdit.id);
-      setValue("produk_id", dtEdit.produk_id);
-      setValue("lokasi_penjualan_id", dtEdit.lokasi_penjualan_id);
+      setValue("produk", dtEdit.produk);
+      setValue("lokasi_penjualan", dtEdit.lokasi_penjualan);
       setValue(
         "tgl_penjualan",
         moment(dtEdit.tgl_penjualan).format("YYYY-MM-DD")

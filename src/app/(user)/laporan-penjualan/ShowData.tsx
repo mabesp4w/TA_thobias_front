@@ -3,7 +3,7 @@
 "use client";
 import PaginationDef from "@/components/pagination/PaginationDef";
 import TableDef from "@/components/table/TableDef";
-import useProdukTerjual from "@/stores/crud/ProdukTerjual";
+import useProdukTerjualUMKM from "@/stores/crud/ProdukTerjualUMKM";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
-  const { setProdukTerjual, dtProdukTerjual } = useProdukTerjual();
+  const { setProdukTerjual, dtProdukTerjual } = useProdukTerjualUMKM();
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const searchParams = useSearchParams();
@@ -58,8 +58,8 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
   ];
   const tableBodies = [
     "tgl_penjualan",
-    "produk.nm_produk",
-    "lokasi_penjualan.nm_lokasi",
+    "produk_detail.nm_produk",
+    "lokasi_penjualan_detail.nm_lokasi",
     "jumlah_terjual",
     "harga_jual",
     "total_penjualan",

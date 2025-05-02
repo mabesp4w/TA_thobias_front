@@ -28,7 +28,7 @@ const Content = () => {
   const { removeData } = useProfilUMKM();
   const [idDel, setIdDel] = useState<number | string>();
 
-  const setShow = (row: any) => {
+  const setShow = () => {
     showModal("detail_umkm");
     // Set detail UMKM untuk ditampilkan
   };

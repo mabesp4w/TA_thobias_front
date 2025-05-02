@@ -6,10 +6,10 @@ import ShowData from "./ShowData";
 import Form from "./form/Form";
 import { Toaster } from "react-hot-toast";
 import toastShow from "@/utils/toast-show";
-import useProdukTerjual from "@/stores/crud/ProdukTerjual";
 import { showModal } from "@/utils/modalHelper";
 import { useWelcomeContext } from "@/context/WelcomeContext";
 import DeleteModal from "@/components/modal/DeleteModal";
+import useProdukTerjualUMKM from "@/stores/crud/ProdukTerjualUMKM";
 
 const halaman = "Laporan Penjualan";
 
@@ -26,7 +26,7 @@ const Content = () => {
     return () => {};
   }, []);
 
-  const { removeData } = useProdukTerjual();
+  const { removeData } = useProdukTerjualUMKM();
   const [idDel, setIdDel] = useState<number | string>();
   const [dtEdit, setDtEdit] = useState<any>();
 

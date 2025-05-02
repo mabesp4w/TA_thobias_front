@@ -68,7 +68,7 @@ const StatistikPage = () => {
 
     // Produk terlaris (by quantity)
     const productSales = data.reduce((acc: any, item) => {
-      const produkId = item.produk_id;
+      const produkId = item.produk;
       if (!acc[produkId]) {
         acc[produkId] = {
           produk: item.produk,
@@ -88,7 +88,7 @@ const StatistikPage = () => {
 
     // Lokasi penjualan terbaik
     const locationSales = data.reduce((acc: any, item) => {
-      const lokasiId = item.lokasi_penjualan_id;
+      const lokasiId = item.lokasi_penjualan;
       if (!acc[lokasiId]) {
         acc[lokasiId] = {
           lokasi: item.lokasi_penjualan,

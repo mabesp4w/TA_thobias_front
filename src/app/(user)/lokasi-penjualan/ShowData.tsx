@@ -53,13 +53,12 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
     "Alamat",
     "Kecamatan",
     "Telepon",
-    "Aksi",
   ];
   const tableBodies = [
     "nm_lokasi",
     "tipe_lokasi",
     "alamat",
-    "kecamatan.nm_kecamatan",
+    "kecamatan_detail.nm_kecamatan",
     "tlp_pengelola",
   ];
 
@@ -83,6 +82,8 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
             limit={10}
             setEdit={setEdit}
             setDelete={setDelete}
+            ubah={false}
+            hapus={false}
           />
         </div>
         {dtLokasiPenjualan?.last_page > 1 && (
