@@ -38,6 +38,7 @@ const Form = ({ dtEdit, halaman }: Props) => {
   const resetForm = () => {
     setValue("id", "");
     setValue("username", "");
+    setValue("first_name", "");
     setValue("email", "");
     setValue("password", "");
     setValue("password_confirmation", "");
@@ -47,6 +48,7 @@ const Form = ({ dtEdit, halaman }: Props) => {
     if (dtEdit) {
       setValue("id", dtEdit.id);
       setValue("username", dtEdit.username);
+      setValue("first_name", dtEdit.first_name);
       setValue("email", dtEdit.email);
       setValue("password", dtEdit.show_password || "");
       setValue("password_confirmation", dtEdit.show_password || "");

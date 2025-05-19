@@ -5,6 +5,7 @@ import * as yup from "yup";
 // Schema validasi untuk form user
 export const validationSchema = yup.object({
   username: yup.string().required("Username wajib diisi"),
+  first_name: yup.string().required("Nama wajib diisi"),
   email: yup
     .string()
     .email("Format email tidak valid")
