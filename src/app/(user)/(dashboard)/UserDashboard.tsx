@@ -103,12 +103,6 @@ const UserDashboard = () => {
             <div className="stat-value">8</div>
             <div className="stat-desc">Lokasi aktif</div>
           </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Rating Bisnis</div>
-            <div className="stat-value">4.8</div>
-            <div className="stat-desc">Dari 120 ulasan</div>
-          </div>
         </div>
       </div>
     </section>

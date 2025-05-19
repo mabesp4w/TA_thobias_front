@@ -91,36 +91,6 @@ const Content = () => {
           </Link>
         ))}
       </div>
-
-      {/* Quick Stats Overview */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Ringkasan Data</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Total UMKM</div>
-            <div className="stat-value text-primary">1,234</div>
-            <div className="stat-desc">↗︎ 50 bulan ini</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Total Produk</div>
-            <div className="stat-value text-secondary">5,678</div>
-            <div className="stat-desc">↗︎ 150 bulan ini</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Total Penjualan</div>
-            <div className="stat-value text-accent">Rp 2.5M</div>
-            <div className="stat-desc">↗︎ 12% dari bulan lalu</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Wilayah Terjangkau</div>
-            <div className="stat-value text-info">34</div>
-            <div className="stat-desc">Provinsi</div>
-          </div>
-        </div>
-      </div>
     </section>
   );
 };

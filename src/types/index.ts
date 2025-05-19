@@ -34,6 +34,7 @@ export interface ProfilUMKMType {
   tlp?: string; // Optional
   desc_bisnis?: string; // Optional
   tgl_bergabung: string; // DateTime
+  user_detail?: UserType;
 }
 
 export interface LokasiUMKMType {
@@ -104,6 +105,7 @@ export interface ProdukTerjualType {
 export interface UserType {
   id?: string; // UUID
   username: string;
+  first_name: string;
   email: string;
   password: string;
   password_confirmation: string;

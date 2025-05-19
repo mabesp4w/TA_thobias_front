@@ -26,6 +26,14 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         errors={errors.profile?.nm_bisnis}
       />
       <InputText
+        label={`Nama Pemilik`}
+        name="first_name"
+        register={register}
+        addClass="col-span-8"
+        required
+        errors={errors.first_name}
+      />
+      <InputText
         label={`Alamat`}
         name="profile.alamat"
         register={register}

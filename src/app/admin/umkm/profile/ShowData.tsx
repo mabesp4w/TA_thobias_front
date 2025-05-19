@@ -57,7 +57,7 @@ const ShowData: FC<Props> = ({ setShow, setDelete }) => {
   ];
   const tableBodies = [
     "nm_bisnis",
-    "user_detail.username",
+    "user_detail.nama_lengkap",
     "user_detail.email",
     "tlp",
     "alamat",

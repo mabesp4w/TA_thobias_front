@@ -56,6 +56,10 @@ const Content = () => {
                 <p>{profilData.nm_bisnis || "-"}</p>
               </div>
               <div>
+                <p className="font-bold">Nama Pemilik</p>
+                <p>{profilData.user_detail?.first_name || "-"}</p>
+              </div>
+              <div>
                 <p className="font-bold">Nomor Telepon</p>
                 <p>{profilData.tlp || "-"}</p>
               </div>
