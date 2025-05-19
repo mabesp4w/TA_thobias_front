@@ -47,6 +47,12 @@ type Store = {
     id: number | string,
     data: ProdukTerjualType
   ) => Promise<{ status: string; data?: any; error?: any }>;
+
+  setMySales: ({ page, limit, search, sortby, order }: Props) => Promise<{
+    status: string;
+    data?: object;
+    error?: object;
+  }>;
 };
 
 const useProdukTerjual = create(
@@ -209,6 +215,38 @@ const useProdukTerjual = create(
         return {
           status: "error",
           data: error.response.data,
+        };
+      }
+    },
+
+    // dt UMKM
+    setMySales: async ({ page = 1, limit = 10, search, sortby, order }) => {
+      const token = await useLogin.getState().setToken();
+      try {
+        const response = await crud({
+          method: "get",
+          url: `/produk-terjual/my_sales/`,
+          headers: { Authorization: `Bearer ${token}` },
+          params: {
+            limit,
+            page,
+            search,
+            sortby,
+            order,
+          },
+        });
+        set((state) => ({
+          ...state,
+          dtProdukTerjual: response.data.data,
+        }));
+        return {
+          status: "berhasil",
+          data: response.data,
+        };
+      } catch (error: any) {
+        return {
+          status: "error",
+          error: error.response?.data,
         };
       }
     },

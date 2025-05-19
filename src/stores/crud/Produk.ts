@@ -47,6 +47,12 @@ type Store = {
     id: number | string,
     data: ProdukType
   ) => Promise<{ status: string; data?: any; error?: any }>;
+
+  setMyProduk: ({ page, limit, search, sortby, order }: Props) => Promise<{
+    status: string;
+    data?: any;
+    error?: any;
+  }>;
 };
 
 const useProduk = create(
@@ -201,6 +207,37 @@ const useProduk = create(
         return {
           status: "error",
           data: error.response.data,
+        };
+      }
+    },
+
+    setMyProduk: async ({ page = 1, limit = 10, search, sortby, order }) => {
+      const token = await useLogin.getState().setToken();
+      try {
+        const response = await crud({
+          method: "get",
+          url: `/produk/my_products/`,
+          headers: { Authorization: `Bearer ${token}` },
+          params: {
+            limit,
+            page,
+            search,
+            sortby,
+            order,
+          },
+        });
+        set((state) => ({
+          ...state,
+          dtProduk: response.data,
+        }));
+        return {
+          status: "berhasil",
+          data: response.data,
+        };
+      } catch (error: any) {
+        return {
+          status: "error",
+          error: error.response?.data,
         };
       }
     },

@@ -13,18 +13,30 @@ import {
   BiLocationPlus,
   BiTrendingUp,
 } from "react-icons/bi";
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
 
 const StatistikPage = () => {
   const { setWelcome } = useWelcomeContext();
-  const { setProdukTerjual, dtProdukTerjual } = useProdukTerjual();
-  const { setProduk, dtProduk } = useProduk();
+  const { setMySales, dtProdukTerjual } = useProdukTerjual();
+  const { setMyProduk, dtProduk } = useProduk();
   const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualan();
 
+  // state
   const [isLoading, setIsLoading] = useState(true);
   const [totalPenjualan, setTotalPenjualan] = useState(0);
   const [penjualanBulanIni, setPenjualanBulanIni] = useState(0);
   const [produkTerlaris, setProdukTerlaris] = useState<any[]>([]);
   const [lokasiTerbaik, setLokasiTerbaik] = useState<any[]>([]);
+  const [dataBulanan, setDataBulanan] = useState<any[]>([]);
 
   useEffect(() => {
     setWelcome("Statistik Bisnis");
@@ -34,8 +46,8 @@ const StatistikPage = () => {
   const fetchAllData = async () => {
     setIsLoading(true);
     await Promise.all([
-      setProdukTerjual({ page: 1, limit: 1000 }),
-      setProduk({ page: 1, limit: 100 }),
+      setMySales({ page: 1, limit: 1000 }),
+      setMyProduk({ page: 1, limit: 100 }),
       setLokasiPenjualan({ page: 1, limit: 100 }),
     ]);
     setIsLoading(false);
@@ -47,7 +59,55 @@ const StatistikPage = () => {
     }
   }, [dtProdukTerjual]);
 
+  // Grafik penjualan bulanan
+  const calculateMonthlyData = () => {
+    const data = dtProdukTerjual?.data || [];
+
+    // Grouping data berdasarkan bulan
+    const monthlyData: Record<string, number> = {};
+
+    // Dapatkan rentang bulan dari data (maksimal 12 bulan terakhir)
+    const endDate = moment();
+    const startDate = moment().subtract(11, "months");
+
+    // Inisialisasi semua bulan dengan nilai 0
+    for (
+      let m = moment(startDate);
+      m.isSameOrBefore(endDate);
+      m.add(1, "month")
+    ) {
+      const monthKey = m.format("YYYY-MM");
+      monthlyData[monthKey] = 0;
+    }
+
+    // Hitung total penjualan per bulan
+    data.forEach((item) => {
+      const monthKey = moment(item.tgl_penjualan).format("YYYY-MM");
+      // Hanya masukkan data dalam 12 bulan terakhir
+      if (monthlyData.hasOwnProperty(monthKey)) {
+        monthlyData[monthKey] += item.total_penjualan || 0;
+      }
+    });
+
+    // Konversi ke format data untuk Recharts dengan format tanggal lengkap
+    const formattedData = Object.keys(monthlyData).map((month) => {
+      const momentDate = moment(month, "YYYY-MM");
+      return {
+        bulan: momentDate.format("MMM YY"),
+        penjualan: monthlyData[month],
+        // Tambahkan property sortDate untuk pengurutan
+        sortDate: momentDate.valueOf(),
+      };
+    });
+
+    // Sort by date - dari bulan terlama ke terbaru (kiri ke kanan)
+    formattedData.sort((a, b) => a.sortDate - b.sortDate);
+
+    setDataBulanan(formattedData);
+  };
+
   const calculateStatistics = () => {
+    calculateMonthlyData();
     const data = dtProdukTerjual?.data || [];
 
     // Total penjualan
@@ -72,6 +132,7 @@ const StatistikPage = () => {
       if (!acc[produkId]) {
         acc[produkId] = {
           produk: item.produk,
+          produk_detail: item.produk_detail,
           jumlah: 0,
           total: 0,
         };
@@ -92,6 +153,7 @@ const StatistikPage = () => {
       if (!acc[lokasiId]) {
         acc[lokasiId] = {
           lokasi: item.lokasi_penjualan,
+          lokasi_detail: item.lokasi_penjualan_detail,
           jumlah: 0,
           total: 0,
         };
@@ -183,7 +245,7 @@ const StatistikPage = () => {
                 <tbody>
                   {produkTerlaris.map((item: any, index) => (
                     <tr key={index}>
-                      <td>{item.produk?.nm_produk}</td>
+                      <td>{item.produk_detail?.nm_produk}</td>
                       <td>{item.jumlah}</td>
                       <td>Rp {item.total.toLocaleString()}</td>
                     </tr>
@@ -210,7 +272,7 @@ const StatistikPage = () => {
                 <tbody>
                   {lokasiTerbaik.map((item: any, index) => (
                     <tr key={index}>
-                      <td>{item.lokasi?.nm_lokasi}</td>
+                      <td>{item.lokasi_detail?.nm_lokasi}</td>
                       <td>{item.jumlah}</td>
                       <td>Rp {item.total.toLocaleString()}</td>
                     </tr>
@@ -222,15 +284,47 @@ const StatistikPage = () => {
         </div>
       </div>
 
-      {/* Grafik Penjualan (Placeholder) */}
+      {/* Grafik Penjualan Bulanan */}
       <div className="mt-8">
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h2 className="card-title">Grafik Penjualan Bulanan</h2>
-            <div className="h-64 bg-base-200 rounded-lg flex items-center justify-center">
-              <p className="text-gray-500">
-                Grafik penjualan akan ditampilkan di sini
-              </p>
+            <h2 className="card-title">
+              Grafik Penjualan Bulanan {moment().year()}
+            </h2>
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={dataBulanan}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="bulan" />
+                  <YAxis
+                    tickFormatter={(value) =>
+                      `Rp${(value / 1000000).toFixed(1)}M`
+                    }
+                  />
+                  <Tooltip
+                    formatter={(value) => [
+                      `Rp${value.toLocaleString()}`,
+                      "Penjualan",
+                    ]}
+                    labelFormatter={(label) => `Bulan: ${label}`}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="penjualan"
+                    name="Total Penjualan"
+                    fill="#8884d8"
+                    radius={[5, 5, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
