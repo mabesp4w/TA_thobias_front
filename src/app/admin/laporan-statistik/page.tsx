@@ -264,11 +264,6 @@ const LaporanStatistikPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Export Button */}
-      <div className="mt-6 flex justify-end">
-        <button className="btn btn-primary">Export Laporan</button>
-      </div>
     </div>
   );
 };

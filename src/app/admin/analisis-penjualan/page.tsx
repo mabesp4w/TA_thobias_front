@@ -27,10 +27,13 @@ const AnalisisPenjualanPage = () => {
     totalPenjualan: 0,
     totalTransaksi: 0,
     rataRataPerTransaksi: 0,
-    penjualanPerWilayah: [],
-    penjualanPerKategori: [],
-    trendBulanan: [],
+    penjualanPerWilayah: [] as any[],
+    penjualanPerKategori: [] as any[],
+    penjualanPerUMKM: [] as any[],
+    trendBulanan: [] as any[],
   });
+
+  console.log({ dtProdukTerjual });
 
   useEffect(() => {
     setWelcome("Analisis Penjualan");
@@ -70,10 +73,10 @@ const AnalisisPenjualanPage = () => {
     // Filter by selected province/district if any
     if (selectedProvinsi) {
       filteredData = filteredData.filter((item: any) => {
-        // Assuming lokasi_penjualan has kecamatan > kabupaten > provinsi relation
+        // Pastikan mengakses properti yang benar berdasarkan struktur data
         return (
-          item.lokasi_penjualan?.kecamatan?.kabupaten?.provinsi_id ===
-          selectedProvinsi
+          item.lokasi_penjualan_detail?.kecamatan_detail?.kabupaten_detail
+            ?.provinsi_detail?.id === selectedProvinsi
         );
       });
     }
@@ -81,7 +84,8 @@ const AnalisisPenjualanPage = () => {
     if (selectedKabupaten) {
       filteredData = filteredData.filter((item: any) => {
         return (
-          item.lokasi_penjualan?.kecamatan?.kabupaten_id === selectedKabupaten
+          item.lokasi_penjualan_detail?.kecamatan_detail?.kabupaten_detail
+            ?.id === selectedKabupaten
         );
       });
     }
@@ -97,24 +101,40 @@ const AnalisisPenjualanPage = () => {
 
     // Penjualan per wilayah
     const penjualanPerWilayah = filteredData.reduce((acc: any, item: any) => {
-      const provinsiName =
-        item.lokasi_penjualan?.kecamatan?.kabupaten?.provinsi?.nm_provinsi ||
-        "Tidak Diketahui";
-      if (!acc[provinsiName]) {
-        acc[provinsiName] = 0;
+      const lokasiName =
+        item.lokasi_penjualan_detail?.nm_lokasi || "Tidak Diketahui";
+      if (!acc[lokasiName]) {
+        acc[lokasiName] = 0;
       }
-      acc[provinsiName] += item.total_penjualan || 0;
+      acc[lokasiName] += item.total_penjualan || 0;
       return acc;
     }, {});
 
     // Penjualan per kategori
     const penjualanPerKategori = filteredData.reduce((acc: any, item: any) => {
       const kategoriName =
-        item.produk?.kategori?.nm_kategori || "Tidak Diketahui";
+        item.kategori_detail?.nm_kategori ||
+        item.produk_detail?.kategori_detail?.nm_kategori ||
+        "Tidak Diketahui";
       if (!acc[kategoriName]) {
         acc[kategoriName] = 0;
       }
       acc[kategoriName] += item.total_penjualan || 0;
+      return acc;
+    }, {});
+
+    // Penjualan per UMKM
+    const penjualanPerUMKM = filteredData.reduce((acc: any, item: any) => {
+      const umkmName =
+        item.umkm_detail?.nm_bisnis ||
+        item.produk_detail?.umkm_detail?.nm_bisnis ||
+        item.umkm_detail?.user_detail?.first_name ||
+        "Tidak Diketahui";
+
+      if (!acc[umkmName]) {
+        acc[umkmName] = 0;
+      }
+      acc[umkmName] += item.total_penjualan || 0;
       return acc;
     }, {});
 
@@ -132,25 +152,21 @@ const AnalisisPenjualanPage = () => {
       totalPenjualan,
       totalTransaksi,
       rataRataPerTransaksi,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       penjualanPerWilayah: Object.entries(penjualanPerWilayah).map(
         ([name, value]) => ({ name, value })
       ),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       penjualanPerKategori: Object.entries(penjualanPerKategori).map(
         ([name, value]) => ({ name, value })
       ),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      penjualanPerUMKM: Object.entries(penjualanPerUMKM).map(
+        ([name, value]) => ({ name, value })
+      ),
       trendBulanan: Object.entries(trendBulanan).map(([month, value]) => ({
         month,
         value,
       })),
     });
   };
-
   if (isLoading) {
     return (
       <div className="h-full flex justify-center items-center">
@@ -273,6 +289,45 @@ const AnalisisPenjualanPage = () => {
             Rp {Math.round(analisisData.rataRataPerTransaksi).toLocaleString()}
           </div>
           <div className="stat-desc">Nilai rata-rata per transaksi</div>
+        </div>
+      </div>
+
+      {/* penjualan per umkm */}
+      <div className="mt-6">
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Penjualan per UMKM</h2>
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>UMKM</th>
+                    <th>Total Penjualan</th>
+                    <th>Persentase</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analisisData.penjualanPerUMKM
+                    ?.sort((a: any, b: any) => b.value - a.value)
+                    .map((item: any, index) => (
+                      <tr key={index}>
+                        <td>{item.name}</td>
+                        <td>Rp {item.value.toLocaleString()}</td>
+                        <td>
+                          {analisisData.totalPenjualan > 0
+                            ? (
+                                (item.value / analisisData.totalPenjualan) *
+                                100
+                              ).toFixed(1)
+                            : 0}
+                          %
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 

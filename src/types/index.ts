@@ -92,6 +92,7 @@ export interface ProdukTerjualType {
   id: string; // UUID
   produk: string;
   produk_detail: ProdukType;
+  kategori_detail: KategoriProdukType;
   lokasi_penjualan: string;
   lokasi_penjualan_detail: LokasiPenjualanType;
   tgl_penjualan: string; // Date
@@ -100,6 +101,7 @@ export interface ProdukTerjualType {
   total_penjualan: number; // DecimalField
   catatan?: string; // Optional
   tgl_pelaporan: string; // DateTime
+  umkm_detail: ProfilUMKMType;
 }
 
 export interface UserType {

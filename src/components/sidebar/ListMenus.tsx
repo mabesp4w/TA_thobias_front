@@ -4,6 +4,7 @@ import MenuType from "@/types/MenuType";
 import { BriefcaseBusinessIcon, Map } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { BsBook, BsHouseDoor, BsInfoLg } from "react-icons/bs";
+import { PiNewspaper } from "react-icons/pi";
 
 const adminUrl = (path: string) => `/admin${path}`;
 const userUrl = (path: string) => `${path}`;
@@ -62,6 +63,21 @@ const setAdminMenus = () => {
         {
           name: "Lokasi",
           href: adminUrl("/umkm/pemetaan-umkm"),
+        },
+      ],
+    },
+    {
+      name: "Laporan",
+      icon: <PiNewspaper />,
+      slug: "laporan",
+      subMenus: [
+        {
+          name: "Statistik",
+          href: adminUrl("/laporan-statistik"),
+        },
+        {
+          name: "Analisis Penjualan",
+          href: adminUrl("/analisis-penjualan"),
         },
       ],
     },
