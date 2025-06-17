@@ -1,271 +1,198 @@
 /** @format */
-
 "use client";
-import { useEffect, useState } from "react";
-import { useWelcomeContext } from "@/context/WelcomeContext";
-import useProfilUMKM from "@/stores/crud/ProfilUMKMAdmin";
-import useProduk from "@/stores/crud/Produk";
-import useProdukTerjual from "@/stores/crud/ProdukTerjual";
-import useProvinsi from "@/stores/crud/Provinsi";
-import moment from "moment";
-import { BiStore, BiPackage, BiMap, BiTrendingUp } from "react-icons/bi";
+import React, { useEffect } from "react";
+import { NextPage } from "next";
+import Head from "next/head";
+import FilterGrafik from "@/components/grafik/FilterGrafik";
+import RingkasanPenjualan from "@/components/grafik/RingkasanPenjualan";
+import GrafikPenjualan from "@/components/grafik/GrafikPenjualan";
+import useGrafikStore from "@/stores/api/GrafikApi";
 
-const LaporanStatistikPage = () => {
-  const { setWelcome } = useWelcomeContext();
-  const { setProfilUMKM, dtProfilUMKM } = useProfilUMKM();
-  const { setProduk, dtProduk } = useProduk();
-  const { setProdukTerjual, dtProdukTerjual } = useProdukTerjual();
-  const { setProvinsi, dtProvinsi } = useProvinsi();
+const StatistikPenjualan: NextPage = () => {
+  const { fetchGrafikPenjualan, fetchRingkasanPenjualan, filters, error } =
+    useGrafikStore();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [statistik, setStatistik] = useState({
-    totalUMKM: 0,
-    umkmAktif: 0,
-    totalProduk: 0,
-    produkAktif: 0,
-    totalPenjualan: 0,
-    rataRataPenjualanPerUMKM: 0,
-    wilayahTerjangkau: 0,
-    kategoriProduk: 0,
-    pertumbuhanUMKM: [],
-    distribusiUMKM: [],
-  });
-
+  // Load initial data saat pertama kali mount
   useEffect(() => {
-    setWelcome("Laporan Statistik");
-    fetchAllData();
-  }, []);
-
-  const fetchAllData = async () => {
-    setIsLoading(true);
-    await Promise.all([
-      setProfilUMKM({ page: 1, limit: 10000 }),
-      setProduk({ page: 1, limit: 10000 }),
-      setProdukTerjual({ page: 1, limit: 10000 }),
-      setProvinsi({ page: 1, limit: 100 }),
-    ]);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    if (dtProfilUMKM?.data && dtProduk?.data && dtProdukTerjual?.data) {
-      calculateStatistics();
-    }
-  }, [dtProfilUMKM, dtProduk, dtProdukTerjual]);
-
-  const calculateStatistics = () => {
-    const umkmData = dtProfilUMKM?.data || [];
-    const produkData = dtProduk?.data || [];
-    const penjualanData = dtProdukTerjual?.data || [];
-
-    // Total UMKM
-    const totalUMKM = umkmData.length;
-    const umkmAktif = umkmData.filter((umkm: any) => umkm.aktif).length;
-
-    // Total Produk
-    const totalProduk = produkData.length;
-    const produkAktif = produkData.filter((prod: any) => prod.aktif).length;
-
-    // Total Penjualan
-    const totalPenjualan = penjualanData.reduce(
-      (sum, item) => sum + (item.total_penjualan || 0),
-      0
-    );
-    const rataRataPenjualanPerUMKM =
-      totalUMKM > 0 ? totalPenjualan / totalUMKM : 0;
-
-    // Wilayah terjangkau
-    const wilayahSet = new Set(umkmData.map((umkm: any) => umkm.provinsi_id));
-    const wilayahTerjangkau = wilayahSet.size;
-
-    // Kategori produk
-    const kategoriSet = new Set(
-      produkData.map((prod: any) => prod.kategori_id)
-    );
-    const kategoriProduk = kategoriSet.size;
-
-    // Pertumbuhan UMKM per bulan
-    const pertumbuhanUMKM = umkmData.reduce((acc: any, umkm: any) => {
-      const month = moment(umkm.tgl_bergabung).format("YYYY-MM");
-      if (!acc[month]) {
-        acc[month] = 0;
+    const loadInitialData = async () => {
+      try {
+        await Promise.all([fetchGrafikPenjualan(), fetchRingkasanPenjualan()]);
+      } catch (error) {
+        console.error("Error loading initial data:", error);
       }
-      acc[month]++;
-      return acc;
-    }, {});
+    };
 
-    // Distribusi UMKM per provinsi
-    const distribusiUMKM = umkmData.reduce((acc: any, umkm: any) => {
-      const provinsiId = umkm.provinsi_id;
-      if (!acc[provinsiId]) {
-        acc[provinsiId] = {
-          nama:
-            dtProvinsi?.data.find((p: any) => p.id === provinsiId)
-              ?.nm_provinsi || "Tidak Diketahui",
-          jumlah: 0,
-        };
-      }
-      acc[provinsiId].jumlah++;
-      return acc;
-    }, {});
+    loadInitialData();
+  }, []); // Hanya jalankan sekali saat mount
 
-    setStatistik({
-      totalUMKM,
-      umkmAktif,
-      totalProduk,
-      produkAktif,
-      totalPenjualan,
-      rataRataPenjualanPerUMKM,
-      wilayahTerjangkau,
-      kategoriProduk,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      pertumbuhanUMKM: Object.entries(pertumbuhanUMKM).map(
-        ([month, count]) => ({ month, count })
-      ),
-      distribusiUMKM: Object.values(distribusiUMKM),
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="h-full flex justify-center items-center">
-        <span className="loading loading-spinner loading-lg" />
-      </div>
-    );
-  }
+  // Tidak perlu useEffect untuk reload data saat filter berubah
+  // karena sudah dihandle oleh FilterGrafik dengan applyFiltersAndFetch
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Laporan Statistik</h1>
+    <>
+      <Head>
+        <title>Dashboard Penjualan UMKM</title>
+        <meta
+          name="description"
+          content="Dashboard grafik penjualan untuk semua UMKM"
+        />
+      </Head>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-primary">
-            <BiStore className="w-8 h-8" />
-          </div>
-          <div className="stat-title">Total UMKM</div>
-          <div className="stat-value text-primary">{statistik.totalUMKM}</div>
-          <div className="stat-desc">{statistik.umkmAktif} UMKM aktif</div>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Dashboard Penjualan
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Analisis data penjualan UMKM
+                </p>
+              </div>
 
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-secondary">
-            <BiPackage className="w-8 h-8" />
-          </div>
-          <div className="stat-title">Total Produk</div>
-          <div className="stat-value text-secondary">
-            {statistik.totalProduk}
-          </div>
-          <div className="stat-desc">{statistik.produkAktif} produk aktif</div>
-        </div>
-
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-accent">
-            <BiTrendingUp className="w-8 h-8" />
-          </div>
-          <div className="stat-title">Total Penjualan</div>
-          <div className="stat-value text-accent">
-            Rp {(statistik.totalPenjualan / 1000000).toFixed(1)}M
-          </div>
-          <div className="stat-desc">Seluruh periode</div>
-        </div>
-
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-info">
-            <BiMap className="w-8 h-8" />
-          </div>
-          <div className="stat-title">Wilayah Terjangkau</div>
-          <div className="stat-value text-info">
-            {statistik.wilayahTerjangkau}
-          </div>
-          <div className="stat-desc">Provinsi</div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pertumbuhan UMKM */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Pertumbuhan UMKM</h2>
-            <div className="overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Bulan</th>
-                    <th>Jumlah UMKM Baru</th>
-                    <th>Kumulatif</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statistik.pertumbuhanUMKM
-                    .sort((a: any, b: any) => a.month.localeCompare(b.month))
-                    .reduce((acc: any[], item: any, index) => {
-                      const kumulatif =
-                        index > 0
-                          ? acc[index - 1].kumulatif + item.count
-                          : item.count;
-
-                      acc.push({
-                        ...item,
-                        kumulatif,
-                      });
-
-                      return acc;
-                    }, [])
-                    .map((item: any, index) => (
-                      <tr key={index}>
-                        <td>{moment(item.month).format("MMMM YYYY")}</td>
-                        <td>{item.count}</td>
-                        <td>{item.kumulatif}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+              {/* Info Badge */}
+              <div className="flex items-center space-x-2">
+                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="flex items-center">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    Live Data
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* Distribusi UMKM per Provinsi */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Distribusi UMKM per Provinsi</h2>
-            <div className="overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Provinsi</th>
-                    <th>Jumlah UMKM</th>
-                    <th>Persentase</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statistik.distribusiUMKM
-                    .sort((a: any, b: any) => b.jumlah - a.jumlah)
-                    .map((item: any, index) => (
-                      <tr key={index}>
-                        <td>{item.nama}</td>
-                        <td>{item.jumlah}</td>
-                        <td>
-                          {statistik.totalUMKM > 0
-                            ? (
-                                (item.jumlah / statistik.totalUMKM) *
-                                100
-                              ).toFixed(1)
-                            : 0}
-                          %
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Alert Error */}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-800">
+                    <strong>Error:</strong> {error}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Filter Section */}
+          <FilterGrafik />
+
+          {/* Summary Section */}
+          <RingkasanPenjualan />
+
+          {/* Main Chart Section */}
+          <GrafikPenjualan />
+
+          {/* Additional Info Section */}
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Tips Section */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Tips Penggunaan
+              </h3>
+              <div className="space-y-3 text-sm text-gray-600">
+                <div className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <p>
+                    Gunakan filter UMKM untuk melihat performa spesifik satu
+                    UMKM
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <p>
+                    Klik &quot;Bandingkan UMKM&quot; untuk melihat perbandingan
+                    antar UMKM
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <p>
+                    Pilih periode bulan untuk analisis data dalam rentang
+                    tertentu
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <p>
+                    Ganti tipe grafik (Garis, Batang, Pie) sesuai preferensi
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <p>
+                    Klik &quot;Terapkan Filter&quot; setelah mengubah pengaturan
+                    filter
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Informasi Filter
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">Tahun Aktif:</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {filters.tahun || new Date().getFullYear()}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">Mode Tampilan:</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {filters.umkm_id ? "UMKM Spesifik" : "Semua UMKM"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">Periode:</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {filters.bulan_start
+                      ? `${filters.bulan_start}${
+                          filters.bulan_end
+                            ? ` - ${filters.bulan_end}`
+                            : " - 12"
+                        }`
+                      : "Semua Bulan"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm text-gray-600">Last Update:</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {new Date().toLocaleString("id-ID")}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 };
 
-export default LaporanStatistikPage;
+export default StatistikPenjualan;
