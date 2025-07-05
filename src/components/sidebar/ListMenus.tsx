@@ -1,8 +1,7 @@
 /** @format */
 
 import MenuType from "@/types/MenuType";
-import { BriefcaseBusinessIcon, Map } from "lucide-react";
-import { BiCategory } from "react-icons/bi";
+import { BiAbacus, BiCategory } from "react-icons/bi";
 import { BsBook, BsHouseDoor, BsInfoLg } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
 
@@ -37,19 +36,24 @@ const setAdminMenus = () => {
       ],
     },
     {
-      name: "Lokasi Penjualan",
-      href: adminUrl("/lokasi-penjualan"),
-      icon: <Map />,
-    },
-    {
       name: "Kategori",
-      href: adminUrl("/kategori-produk"),
       icon: <BiCategory />,
+      slug: "kategori",
+      subMenus: [
+        {
+          name: "Produk",
+          href: adminUrl("/kategori/produk"),
+        },
+        {
+          name: "Lokasi Penjualan",
+          href: adminUrl("/kategori/lokasi-penjualan"),
+        },
+      ],
     },
     {
       name: "UMKM",
       href: adminUrl("/umkm"),
-      icon: <BriefcaseBusinessIcon />,
+      icon: <BiAbacus />,
       slug: "umkm",
       subMenus: [
         {

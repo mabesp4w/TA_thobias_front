@@ -1,11 +1,11 @@
 /** @format */
-// stores/crud/ProdukUMKM.ts
+
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { crud } from "@/services/baseURL";
 import useLogin from "../auth/login";
-import { ProdukType } from "@/types";
-
+import { KategoriLokasiPenjualanType } from "@/types";
+// store kategoriLokasiPenjualan
 type Props = {
   page?: number;
   limit?: number;
@@ -15,28 +15,34 @@ type Props = {
 };
 
 type Store = {
-  dtProduk: {
+  dtKategoriLokasiPenjualan: {
     last_page: number;
     current_page: number;
-    data: ProdukType[];
+    data: KategoriLokasiPenjualanType[];
   };
 
-  showProduk: ProdukType | null;
+  showKategoriLokasiPenjualan: KategoriLokasiPenjualanType | null;
 
-  setProduk: ({ page, limit, search, sortby, order }: Props) => Promise<{
+  setKategoriLokasiPenjualan: ({
+    page,
+    limit,
+    search,
+    sortby,
+    order,
+  }: Props) => Promise<{
     status: string;
-    data?: any;
-    error?: any;
+    data?: object;
+    error?: object;
   }>;
 
-  setShowProduk: (id: number | string) => Promise<{
+  setShowKategoriLokasiPenjualan: (id: number | string) => Promise<{
     status: string;
-    data?: any;
-    error?: any;
+    data?: object;
+    error?: object;
   }>;
 
-  addMyProduk: (
-    data: ProdukType
+  addData: (
+    data: KategoriLokasiPenjualanType
   ) => Promise<{ status: string; data?: any; error?: any }>;
 
   removeData: (
@@ -45,25 +51,30 @@ type Store = {
 
   updateData: (
     id: number | string,
-    data: ProdukType
+    data: KategoriLokasiPenjualanType
   ) => Promise<{ status: string; data?: any; error?: any }>;
 };
 
-const useProdukUMKM = create(
+const useKategoriLokasiPenjualan = create(
   devtools<Store>((set) => ({
-    dtProduk: {
+    dtKategoriLokasiPenjualan: {
       last_page: 0,
       current_page: 0,
       data: [],
     },
-    showProduk: null,
-
-    setProduk: async ({ page = 1, limit = 10, search, sortby, order }) => {
+    showKategoriLokasiPenjualan: null,
+    setKategoriLokasiPenjualan: async ({
+      page = 1,
+      limit = 10,
+      search,
+      sortby,
+      order,
+    }) => {
       const token = await useLogin.getState().setToken();
       try {
         const response = await crud({
           method: "get",
-          url: `/produk/my_products/`,
+          url: `/kategori-lokasi-penjualan/`,
           headers: { Authorization: `Bearer ${token}` },
           params: {
             limit,
@@ -75,7 +86,7 @@ const useProdukUMKM = create(
         });
         set((state) => ({
           ...state,
-          dtProduk: response.data,
+          dtKategoriLokasiPenjualan: response.data.data,
         }));
         return {
           status: "berhasil",
@@ -88,18 +99,17 @@ const useProdukUMKM = create(
         };
       }
     },
-
-    setShowProduk: async (id) => {
+    setShowKategoriLokasiPenjualan: async (id) => {
       const token = await useLogin.getState().setToken();
       try {
         const response = await crud({
           method: "get",
-          url: `/produk/${id}/`,
+          url: `/kategori-lokasi-penjualan/${id}/`,
           headers: { Authorization: `Bearer ${token}` },
         });
         set((state) => ({
           ...state,
-          showProduk: response.data.data,
+          showKategoriLokasiPenjualan: response.data.data,
         }));
         return {
           status: "berhasil",
@@ -112,21 +122,20 @@ const useProdukUMKM = create(
         };
       }
     },
-
-    addMyProduk: async (row: ProdukType) => {
+    addData: async (row) => {
       const token = await useLogin.getState().setToken();
       try {
         const res = await crud({
           method: "post",
-          url: `/produk/create_my_product/`,
+          url: `/kategori-lokasi-penjualan/`,
           headers: { Authorization: `Bearer ${token}` },
           data: row,
         });
         set((prevState) => ({
-          dtProduk: {
-            last_page: prevState.dtProduk.last_page,
-            current_page: prevState.dtProduk.current_page,
-            data: [res.data.data, ...prevState.dtProduk.data],
+          dtKategoriLokasiPenjualan: {
+            last_page: prevState.dtKategoriLokasiPenjualan.last_page,
+            current_page: prevState.dtKategoriLokasiPenjualan.current_page,
+            data: [res.data.data, ...prevState.dtKategoriLokasiPenjualan.data],
           },
         }));
         return {
@@ -140,20 +149,21 @@ const useProdukUMKM = create(
         };
       }
     },
-
     removeData: async (id) => {
       const token = await useLogin.getState().setToken();
       try {
         const res = await crud({
           method: "delete",
-          url: `/produk/${id}/destroy_my_product/`,
+          url: `/kategori-lokasi-penjualan/${id}/`,
           headers: { Authorization: `Bearer ${token}` },
         });
         set((prevState) => ({
-          dtProduk: {
-            last_page: prevState.dtProduk.last_page,
-            current_page: prevState.dtProduk.current_page,
-            data: prevState.dtProduk.data.filter((item: any) => item.id !== id),
+          dtKategoriLokasiPenjualan: {
+            last_page: prevState.dtKategoriLokasiPenjualan.last_page,
+            current_page: prevState.dtKategoriLokasiPenjualan.current_page,
+            data: prevState.dtKategoriLokasiPenjualan.data.filter(
+              (item: any) => item.id !== id
+            ),
           },
         }));
         return {
@@ -167,21 +177,20 @@ const useProdukUMKM = create(
         };
       }
     },
-
     updateData: async (id, row) => {
       const token = await useLogin.getState().setToken();
       try {
         const response = await crud({
           method: "PUT",
-          url: `/produk/${id}/update_my_product/`,
+          url: `/kategori-lokasi-penjualan/${id}/`,
           headers: { Authorization: `Bearer ${token}` },
           data: row,
         });
         set((prevState) => ({
-          dtProduk: {
-            last_page: prevState.dtProduk.last_page,
-            current_page: prevState.dtProduk.current_page,
-            data: prevState.dtProduk.data.map((item: any) => {
+          dtKategoriLokasiPenjualan: {
+            last_page: prevState.dtKategoriLokasiPenjualan.last_page,
+            current_page: prevState.dtKategoriLokasiPenjualan.current_page,
+            data: prevState.dtKategoriLokasiPenjualan.data.map((item: any) => {
               if (item.id === id) {
                 return {
                   ...item,
@@ -207,4 +216,4 @@ const useProdukUMKM = create(
   }))
 );
 
-export default useProdukUMKM;
+export default useKategoriLokasiPenjualan;

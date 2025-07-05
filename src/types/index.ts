@@ -57,6 +57,12 @@ export interface KategoriProdukType {
   desc?: string; // Optional
 }
 
+export interface KategoriLokasiPenjualanType {
+  id: string; // UUID
+  nm_kategori_lokasi: string;
+  desc?: string; // Optional
+}
+
 export interface ProdukType {
   id: string; // UUID
   umkm: string; // User ID (ForeignKey to User)
@@ -117,4 +123,30 @@ export interface UserType {
   last_login?: string; // DateTime
   date_joined?: string; // DateTime
   profile?: ProfilUMKMType;
+}
+
+export interface LokasiPenjualanType {
+  id: string;
+  umkm?: string;
+  umkm_detail?: ProfilUMKMType;
+  umkm_nama?: string;
+  nm_lokasi: string;
+  kategori_lokasi?: string;
+  kategori_lokasi_detail?: KategoriLokasiPenjualanType;
+  kategori_lokasi_nama?: string;
+  alamat: string;
+  latitude?: number;
+  longitude?: number;
+  kecamatan?: string;
+  kecamatan_detail?: KecamatanType;
+  kecamatan_nama?: string;
+  kabupaten_detail?: KabupatenType;
+  kabupaten_nama?: string;
+  provinsi_detail?: ProvinsiType;
+  provinsi_nama?: string;
+  tlp_pengelola?: string;
+  aktif?: boolean;
+  total_penjualan?: number;
+  tgl_dibuat?: string;
+  tgl_update?: string;
 }

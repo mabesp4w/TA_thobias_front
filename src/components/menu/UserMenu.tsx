@@ -56,6 +56,11 @@ const UserMenu = () => {
       href: "/laporan-penjualan",
     },
     {
+      title: "File Laporan",
+      icon: <BiCart className="h-5 w-5" />,
+      href: "/file-penjualan",
+    },
+    {
       title: "Statistik",
       icon: <BiLineChart className="h-5 w-5" />,
       href: "/statistik",

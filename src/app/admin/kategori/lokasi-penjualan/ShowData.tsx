@@ -1,9 +1,8 @@
 /** @format */
-
 "use client";
 import PaginationDef from "@/components/pagination/PaginationDef";
 import TableDef from "@/components/table/TableDef";
-import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
+import useKategoriLokasiPenjualan from "@/stores/crud/KategoriLokasiPenjualan";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
@@ -17,17 +16,22 @@ type Props = {
   setEdit: (row: any) => void;
 };
 
+// kategoriProduk
+
 const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
-  const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualan();
+  const { setKategoriLokasiPenjualan, dtKategoriLokasiPenjualan } =
+    useKategoriLokasiPenjualan();
+  // state
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  // search params
   const searchParams = useSearchParams();
   const sortby = searchParams.get("sortby") || "";
   const order = searchParams.get("order") || "";
   const search = searchParams.get("cari") || "";
 
-  const fetchDataLokasiPenjualan = async () => {
-    await setLokasiPenjualan({
+  const fetchDataDosen = async () => {
+    await setKategoriLokasiPenjualan({
       page,
       search,
       sortby,
@@ -37,30 +41,21 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
   };
 
   useEffect(() => {
-    fetchDataLokasiPenjualan();
+    fetchDataDosen();
     return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
+  // ketika search berubah
   useEffect(() => {
     setPage(1);
-    fetchDataLokasiPenjualan();
+    fetchDataDosen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, sortby, order]);
 
-  const headTable = [
-    "No",
-    "Nama Lokasi",
-    "Tipe Lokasi",
-    "Alamat",
-    "Kecamatan",
-    "Telepon",
-  ];
-  const tableBodies = [
-    "nm_lokasi",
-    "tipe_lokasi",
-    "alamat",
-    "kecamatan_detail.nm_kecamatan",
-    "tlp_pengelola",
-  ];
+  // table
+  const headTable = ["No", "Nama Kategori", "Keterangan", "Aksi"];
+  const tableBodies = ["nm_kategori_lokasi", "desc"];
 
   if (isLoading) {
     return (
@@ -72,25 +67,23 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
 
   return (
     <div className="flex-1 flex-col max-w-full h-full overflow-auto">
-      <div className="overflow-hidden h-full flex flex-col">
+      <div className="overflow-hidden h-full flex flex-col ">
         <div className="overflow-auto grow">
           <TableDef
             headTable={headTable}
             tableBodies={tableBodies}
-            dataTable={dtLokasiPenjualan?.data}
+            dataTable={dtKategoriLokasiPenjualan?.data}
             page={page}
             limit={10}
             setEdit={setEdit}
             setDelete={setDelete}
-            ubah={false}
-            hapus={false}
           />
         </div>
-        {dtLokasiPenjualan?.last_page > 1 && (
+        {dtKategoriLokasiPenjualan?.last_page > 1 && (
           <div className="mt-4">
             <PaginationDef
-              currentPage={dtLokasiPenjualan?.current_page}
-              totalPages={dtLokasiPenjualan?.last_page}
+              currentPage={dtKategoriLokasiPenjualan?.current_page}
+              totalPages={dtKategoriLokasiPenjualan?.last_page}
               setPage={setPage}
             />
           </div>
