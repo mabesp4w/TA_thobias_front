@@ -11,16 +11,25 @@ import {
   BiLocationPlus,
   BiLineChart,
   BiLogOut,
+  BiChevronDown,
+  BiChevronUp,
 } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import useLogout from "@/stores/auth/logout";
 import handleLogout from "@/app/auth/logout/logout";
 import { useState } from "react";
 
+interface SubMenuItem {
+  title: string;
+  icon?: JSX.Element;
+  href: string;
+}
+
 interface MenuItem {
   title: string;
   icon: JSX.Element;
   href: string;
+  subMenu?: SubMenuItem[];
 }
 
 const UserMenu = () => {
@@ -28,6 +37,7 @@ const UserMenu = () => {
   const router = useRouter();
   const { setLogout } = useLogout();
   const [loadLogout, setLoadLogout] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
   const menuItems: MenuItem[] = [
     {
@@ -59,6 +69,16 @@ const UserMenu = () => {
       title: "File Laporan",
       icon: <BiCart className="h-5 w-5" />,
       href: "/file-penjualan",
+      subMenu: [
+        {
+          title: "Upload File",
+          href: "/file-penjualan",
+        },
+        {
+          title: "Export Excel",
+          href: "/export-excel",
+        },
+      ],
     },
     {
       title: "Statistik",
@@ -74,10 +94,35 @@ const UserMenu = () => {
     }
 
     // Untuk menu lain, periksa apakah pathname dimulai dengan href
-    // Ini akan membuat submenu seperti /lokasi-penjualan/form tetap menjaga
-    // menu lokasi-penjualan tetap aktif
     return pathname.startsWith(href);
   };
+
+  const isParentActive = (item: MenuItem) => {
+    // Cek apakah menu utama atau salah satu submenu aktif
+    if (isActive(item.href)) return true;
+
+    if (item.subMenu) {
+      return item.subMenu.some((sub) => isActive(sub.href));
+    }
+
+    return false;
+  };
+
+  const toggleSubmenu = (title: string) => {
+    setExpandedMenus((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
+        : [...prev, title]
+    );
+  };
+
+  // Auto expand menu yang aktif
+  useState(() => {
+    const activeMenus = menuItems
+      .filter((item) => item.subMenu && isParentActive(item))
+      .map((item) => item.title);
+    setExpandedMenus(activeMenus);
+  });
 
   return (
     <div className="h-full flex flex-col bg-white">
@@ -88,27 +133,75 @@ const UserMenu = () => {
       </div>
 
       {/* Menu Items */}
-      <ul className="menu p-4 flex-1">
+      <ul className="menu p-4 flex-1 overflow-y-auto">
         {menuItems.map((item, index) => (
           <li key={index}>
-            <Link
-              href={item.href}
-              className={`flex items-center gap-3 ${
-                isActive(item.href)
-                  ? "active bg-primary text-primary-content"
-                  : "hover:bg-base-200"
-              }`}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </Link>
+            {item.subMenu ? (
+              <>
+                {/* Menu dengan submenu */}
+                <div
+                  onClick={() => toggleSubmenu(item.title)}
+                  className={`flex items-center justify-between cursor-pointer ${
+                    isParentActive(item)
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "hover:bg-base-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </div>
+                  {expandedMenus.includes(item.title) ? (
+                    <BiChevronUp className="h-4 w-4" />
+                  ) : (
+                    <BiChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+
+                {/* Submenu items */}
+                {expandedMenus.includes(item.title) && (
+                  <ul className="mt-1">
+                    {item.subMenu.map((subItem, subIndex) => (
+                      <li key={subIndex}>
+                        <Link
+                          href={subItem.href}
+                          className={`pl-11 flex items-center gap-2 ${
+                            isActive(subItem.href)
+                              ? "bg-primary text-primary-content"
+                              : "hover:bg-base-200"
+                          }`}
+                        >
+                          {subItem.icon && subItem.icon}
+                          <span className="text-sm">{subItem.title}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            ) : (
+              /* Menu tanpa submenu */
+              <Link
+                href={item.href}
+                className={`flex items-center gap-3 ${
+                  isActive(item.href)
+                    ? "active bg-primary text-primary-content"
+                    : "hover:bg-base-200"
+                }`}
+              >
+                {item.icon}
+                <span>{item.title}</span>
+              </Link>
+            )}
           </li>
         ))}
       </ul>
 
       {/* Logout Button */}
       {loadLogout ? (
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+        <div className="p-4 border-t border-base-300 flex justify-center">
+          <span className="loading loading-spinner loading-lg text-primary"></span>
+        </div>
       ) : (
         <div className="p-4 border-t border-base-300">
           <button

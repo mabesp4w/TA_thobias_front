@@ -7,7 +7,7 @@ import { FieldErrors } from "react-hook-form";
 import SelectFromDb from "@/components/select/SelectFromDB";
 import InputTextarea from "@/components/input/InputTextarea";
 import useProdukUMKM from "@/stores/crud/ProdukUMKM";
-import useLokasiPenjualanApi from "@/stores/api/LokasiPenjualan";
+import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
 
 type Props = {
   register: any;
@@ -21,14 +21,16 @@ type Props = {
 const BodyForm: FC<Props> = ({ register, errors, control, watch }) => {
   // store
   const { setProduk, dtProduk } = useProdukUMKM();
-  const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualanApi();
+  const { setMyLokasiPenjualan, dtMyLokasiPenjualan } = useLokasiPenjualan();
   // state
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     setProduk({ page: 1, limit: 100 });
-    setLokasiPenjualan();
+    setMyLokasiPenjualan({
+      limit: 100,
+    });
     setIsLoading(false);
   }, []);
 
@@ -59,12 +61,12 @@ const BodyForm: FC<Props> = ({ register, errors, control, watch }) => {
         />
       )}
 
-      {!isLoading && dtLokasiPenjualan?.length > 0 && (
+      {!isLoading && dtMyLokasiPenjualan?.data?.length > 0 && (
         <SelectFromDb
           label="Lokasi Penjualan"
           name="lokasi_penjualan"
           control={control}
-          dataDb={dtLokasiPenjualan}
+          dataDb={dtMyLokasiPenjualan?.data}
           body={["id", "nm_lokasi"]}
           addClass="col-span-8"
           required

@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useWelcomeContext } from "@/context/WelcomeContext";
 import { BiMap } from "react-icons/bi";
-import UMKMLocationMap from "@/components/map/UMKMLocationMap";
+// import UMKMLocationMap from "@/components/map/UMKMLocationMap";
 
 const PemetaanUMKMPage = () => {
   const { setWelcome } = useWelcomeContext();
@@ -44,7 +44,7 @@ const PemetaanUMKMPage = () => {
         <div className="card-body">
           <h2 className="card-title mb-4">Peta Sebaran UMKM</h2>
           <div className="h-[600px] w-full rounded-lg overflow-hidden">
-            <UMKMLocationMap showControl={false} />
+            {/* <UMKMLocationMap showControl={false} /> */}
           </div>
         </div>
       </div>

@@ -80,8 +80,8 @@ const setAdminMenus = () => {
           href: adminUrl("/laporan-statistik"),
         },
         {
-          name: "Analisis Penjualan",
-          href: adminUrl("/analisis-penjualan"),
+          name: "Export Excel",
+          href: adminUrl("/export-excel"),
         },
       ],
     },
