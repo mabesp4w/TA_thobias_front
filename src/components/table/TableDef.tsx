@@ -49,7 +49,11 @@ const TableDef: FC<Props> = ({
       <thead>
         <tr>
           {headTable &&
-            headTable.map((item, index) => <th key={index}>{item}</th>)}
+            headTable.map((item, index) => (
+              <th key={index} className="text-sm md:text-base">
+                {item}
+              </th>
+            ))}
         </tr>
       </thead>
       <tbody>
@@ -67,17 +71,22 @@ const TableDef: FC<Props> = ({
                 }}
                 className={`${onClick ? "cursor-grab" : ""}`}
               >
-                <td className="px-6 py-4 rounded-l-xl">{showNo(index)}</td>
+                <td className="px-6 py-4 rounded-l-xl text-sm md:text-base">
+                  {showNo(index)}
+                </td>
                 {/* loop td */}
                 {tableBodies.map((column, index) => {
                   return (
-                    <td key={index} className={`px-6 py-4`}>
+                    <td
+                      key={index}
+                      className={`px-6 py-4 text-sm md:text-base`}
+                    >
                       {getProperty(row, column, dtIndex, setIndexBox)}
                     </td>
                   );
                 })}
                 {/* aksi */}
-                <td className="px-6 py-4 rounded-r-xl">
+                <td className="px-6 py-4 rounded-r-xl text-sm md:text-base">
                   <div className="flex flex-row gap-2">
                     {/*  */}
                     {costume && costume(row)}

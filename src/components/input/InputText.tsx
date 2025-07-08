@@ -28,6 +28,7 @@ type Props = {
   addClass?: string;
   labelClass?: string;
   value?: string | number;
+  step?: any;
 };
 
 const InputText = ({
@@ -46,6 +47,7 @@ const InputText = ({
   addClass,
   labelClass,
   value,
+  step,
 }: Props) => {
   const [isTypePassword, setIsTypePassword] = useState(false);
   const tooglePassword = () => {
@@ -183,6 +185,7 @@ const InputText = ({
           className="input input-bordered w-full text-gray-600"
           readOnly={readOnly}
           autoComplete={autoComplete}
+          step={step}
           {...register(name as any, {
             required,
             minLength,

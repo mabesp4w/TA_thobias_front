@@ -10,7 +10,7 @@ import { token_mapbox } from "@/services/baseURL";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 // Import konstanta
-import { MAP_STYLES, TIPE_LOKASI } from "@/constants/mapConstant";
+import { MAP_STYLES } from "@/constants/mapConstant";
 // tipe data
 export interface MapProps {
   initialLng?: number;
@@ -23,6 +23,7 @@ export interface MapProps {
   initialMapStyle?: string;
   lokasiPenjualan?: LokasiPenjualanType[];
   lokasiUMKM?: LokasiUMKMType[];
+  kategoriLokasi?: KategoriLokasiPenjualanType[];
   enableDraggableMarker?: boolean;
   onLocationSelect?: (lng: number, lat: number) => void;
   showControl?: boolean;
@@ -43,7 +44,12 @@ import {
   CoordinateInputs,
   MapControls,
 } from "@/components/map/FilterOther";
-import { LokasiPenjualanType, LokasiUMKMType } from "@/types";
+import {
+  LokasiPenjualanType,
+  LokasiUMKMType,
+  KategoriLokasiPenjualanType,
+} from "@/types";
+import useKategoriLokasiPenjualanApi from "@/stores/api/KategoriLokasiPenjualan";
 
 mapboxgl.accessToken = token_mapbox;
 
@@ -57,6 +63,7 @@ const UMKMLocationMap: React.FC<MapProps> = ({
   setValue,
   lokasiPenjualan = [],
   lokasiUMKM = [],
+  kategoriLokasi: propKategoriLokasi,
   enableDraggableMarker = false,
   onLocationSelect,
   showControl = true,
@@ -69,11 +76,37 @@ const UMKMLocationMap: React.FC<MapProps> = ({
   const [mapStyle, setMapStyle] = useState(initialMapStyle);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const draggableMarker = useRef<mapboxgl.Marker | null>(null);
-  const [activeFilters, setActiveFilters] = useState<string[]>(
-    TIPE_LOKASI.map((type) => type.value)
-  );
   const [isLocating, setIsLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mapLoaded, setMapLoaded] = useState(false); // Track map loaded state
+
+  // Get kategori lokasi from store if not provided via props
+  const { setKategoriLokasiPenjualan, dtKategoriLokasiPenjualan } =
+    useKategoriLokasiPenjualanApi();
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  // Use prop kategoriLokasi if provided, otherwise use from store
+  const kategoriLokasi = propKategoriLokasi || dtKategoriLokasiPenjualan || [];
+
+  // Fetch kategori lokasi if not provided via props
+  useEffect(() => {
+    if (
+      !propKategoriLokasi &&
+      (!dtKategoriLokasiPenjualan || dtKategoriLokasiPenjualan.length === 0)
+    ) {
+      setKategoriLokasiPenjualan();
+    }
+  }, [propKategoriLokasi]);
+
+  // Initialize active filters based on available categories
+  useEffect(() => {
+    if (kategoriLokasi.length > 0 && activeFilters.length === 0) {
+      // Set all kategori IDs as active by default
+      const allKategoriIds = kategoriLokasi.map((k) => k.id);
+      setActiveFilters([...allKategoriIds, "umkm"]);
+    }
+  }, [kategoriLokasi]);
+
   // Fungsi untuk mencari lokasi berbasis pencarian
   const handleSearchLocation = async (): Promise<void> => {
     await searchLocationByQuery(
@@ -102,12 +135,19 @@ const UMKMLocationMap: React.FC<MapProps> = ({
 
   // Fungsi untuk mengupdate marker lokasi
   const handleAddMarkers = (): void => {
+    // Only add markers if map is loaded
+    if (!mapLoaded || !map.current) {
+      console.log("Map not ready for markers yet");
+      return;
+    }
+
     addLocationMarkers(
       map.current,
       markersRef,
       lokasiPenjualan,
       lokasiUMKM,
-      activeFilters
+      activeFilters,
+      kategoriLokasi
     );
   };
 
@@ -116,6 +156,8 @@ const UMKMLocationMap: React.FC<MapProps> = ({
     setMapStyle(newStyle);
     if (map.current) {
       map.current.setStyle(newStyle);
+      // Reset map loaded state when style changes
+      setMapLoaded(false);
     }
   };
 
@@ -145,6 +187,20 @@ const UMKMLocationMap: React.FC<MapProps> = ({
 
       // Tambahkan kontrol navigasi
       map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+      // Event listener untuk map load
+      map.current.on("load", () => {
+        console.log("Map loaded!");
+        setMapLoaded(true);
+      });
+
+      // Event listener untuk style load (ketika style berubah)
+      map.current.on("styledata", () => {
+        if (map.current?.isStyleLoaded()) {
+          console.log("Map style loaded!");
+          setMapLoaded(true);
+        }
+      });
 
       // Buat marker yang dapat digerakkan (draggable) jika diaktifkan
       if (enableDraggableMarker) {
@@ -176,9 +232,6 @@ const UMKMLocationMap: React.FC<MapProps> = ({
           console.log(`Koordinat baru: ${newLng}, ${newLat}`);
         });
       }
-
-      // menambahkan marker
-      handleAddMarkers();
 
       // Event listener untuk perubahan peta
       map.current.on("move", () => {
@@ -226,9 +279,17 @@ const UMKMLocationMap: React.FC<MapProps> = ({
   }, [mapStyle, initialLng, initialLat, initialZoom]);
 
   // Tambah atau perbarui marker ketika data lokasi berubah atau filter aktif
+  // AND when map is loaded
   useEffect(() => {
-    handleAddMarkers();
-  }, [lokasiPenjualan, lokasiUMKM, activeFilters]);
+    if (mapLoaded) {
+      // Add small delay to ensure map is fully ready
+      const timer = setTimeout(() => {
+        handleAddMarkers();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [lokasiPenjualan, lokasiUMKM, activeFilters, kategoriLokasi, mapLoaded]);
 
   return (
     <div>
@@ -280,6 +341,7 @@ const UMKMLocationMap: React.FC<MapProps> = ({
         <FilterLokasi
           activeFilters={activeFilters}
           toggleFilter={toggleFilter}
+          kategoriLokasi={kategoriLokasi}
         />
       </div>
 
@@ -291,8 +353,15 @@ const UMKMLocationMap: React.FC<MapProps> = ({
           className="rounded shadow"
         />
 
+        {/* Show loading indicator when map is not ready */}
+        {!mapLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
+            <div className="text-gray-600">Loading map...</div>
+          </div>
+        )}
+
         {/* Petunjuk interaksi peta jika marker dapat digeser */}
-        {enableDraggableMarker && (
+        {enableDraggableMarker && mapLoaded && (
           <div className="absolute top-2 left-0 right-0 flex justify-center pointer-events-none">
             <div className="bg-white p-2 rounded shadow pointer-events-auto">
               {draggableMarker.current ? (
@@ -311,7 +380,7 @@ const UMKMLocationMap: React.FC<MapProps> = ({
       </div>
 
       {/* Legenda marker */}
-      <MapLegend />
+      <MapLegend kategoriLokasi={kategoriLokasi} />
 
       {/* Input koordinat jika marker dapat digeser */}
       {enableDraggableMarker && (

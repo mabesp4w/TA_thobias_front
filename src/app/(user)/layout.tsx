@@ -23,7 +23,9 @@ export default function UserLayout({
           {/* Mobile Menu */}
           <UserMobileMenu />
           {/* Main content for desktop */}
-          <main className="flex-1 overflow-auto lg:mt-0 mt-12">{children}</main>
+          <main className="flex-1 overflow-auto lg:mt-0 mt-12 mx-2 md:mx-4">
+            {children}
+          </main>
           <Auth />
         </div>
       </MenuContextProvider>

@@ -1,42 +1,57 @@
 /** @format */
 
 import React from "react";
-import { MARKER_COLORS, TIPE_LOKASI } from "@/constants/mapConstant";
+import { getMarkerColor } from "@/constants/mapConstant";
 import { closeModal } from "@/utils/modalHelper";
+import { KategoriLokasiPenjualanType } from "@/types";
 
 interface FilterLokasiProps {
   activeFilters: string[];
   toggleFilter: (value: string) => void;
+  kategoriLokasi?: KategoriLokasiPenjualanType[];
 }
 
 /**
- * Komponen untuk filter lokasi
+ * Komponen untuk filter lokasi berdasarkan kategori
  */
 export const FilterLokasi: React.FC<FilterLokasiProps> = ({
   activeFilters,
   toggleFilter,
+  kategoriLokasi = [],
 }) => {
+  // Tambahkan filter untuk UMKM
+  const allFilters = [
+    ...kategoriLokasi.map((k) => ({
+      id: k.id,
+      label: k.nm_kategori_lokasi,
+      color: getMarkerColor(k.id, kategoriLokasi),
+    })),
+    {
+      id: "umkm",
+      label: "UMKM",
+      color: "#00B894",
+    },
+  ];
+
   return (
     <div className="filter-section">
       <span className="font-medium mr-2">Filter Lokasi:</span>
       <div className="flex flex-wrap gap-2 mt-1">
-        {TIPE_LOKASI.map((tipe) => (
-          <label key={tipe.value} className="inline-flex items-center">
+        {allFilters.map((filter) => (
+          <label key={filter.id} className="inline-flex items-center">
             <input
               type="checkbox"
-              checked={activeFilters.includes(tipe.value)}
-              onChange={() => toggleFilter(tipe.value)}
+              checked={activeFilters.includes(filter.id)}
+              onChange={() => toggleFilter(filter.id)}
               className="mr-1"
             />
             <span
               className="px-2 py-1 rounded text-white text-sm"
               style={{
-                backgroundColor:
-                  MARKER_COLORS[tipe.value as keyof typeof MARKER_COLORS] ||
-                  "#000",
+                backgroundColor: filter.color,
               }}
             >
-              {tipe.label}
+              {filter.label}
             </span>
           </label>
         ))}
@@ -48,22 +63,36 @@ export const FilterLokasi: React.FC<FilterLokasiProps> = ({
 /**
  * Komponen untuk legenda warna marker
  */
-export const MapLegend: React.FC = () => {
+export const MapLegend: React.FC<{
+  kategoriLokasi?: KategoriLokasiPenjualanType[];
+}> = ({ kategoriLokasi = [] }) => {
+  // Gabungkan kategori dengan UMKM
+  const allLegends = [
+    ...kategoriLokasi.map((k) => ({
+      id: k.id,
+      label: k.nm_kategori_lokasi,
+      color: getMarkerColor(k.id, kategoriLokasi),
+    })),
+    {
+      id: "umkm",
+      label: "UMKM",
+      color: "#00B894",
+    },
+  ];
+
   return (
     <div className="legend mt-2 p-2 bg-gray-100 rounded">
       <div className="font-medium mb-1">Legenda:</div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {TIPE_LOKASI.map((tipe) => (
-          <div key={tipe.value} className="flex items-center">
+        {allLegends.map((legend) => (
+          <div key={legend.id} className="flex items-center">
             <div
               className="w-4 h-4 rounded-full mr-2"
               style={{
-                backgroundColor:
-                  MARKER_COLORS[tipe.value as keyof typeof MARKER_COLORS] ||
-                  "#000",
+                backgroundColor: legend.color,
               }}
             ></div>
-            <span>{tipe.label}</span>
+            <span>{legend.label}</span>
           </div>
         ))}
       </div>
@@ -71,6 +100,7 @@ export const MapLegend: React.FC = () => {
   );
 };
 
+// Komponen SearchBar dan lainnya tetap sama...
 interface SearchBarProps {
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
@@ -239,6 +269,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           }}
           className="btn btn-sm btn-primary"
           title="Ambil koordinat saat ini"
+          type="button"
         >
           Ambil Koordinat
         </button>

@@ -6,7 +6,7 @@ type Props = {
   id: string;
   title?: string;
   children?: ReactNode;
-  size?: "lg" | "md" | "sm";
+  size?: "xl" | "lg" | "md" | "sm";
 };
 
 const ModalDef = ({ id, title, children, size }: Props) => {
