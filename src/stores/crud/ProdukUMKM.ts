@@ -6,6 +6,49 @@ import { crud } from "@/services/baseURL";
 import useLogin from "../auth/login";
 import { ProdukType } from "@/types";
 
+// Helper function to convert object to FormData
+const createFormData = (data: ProdukType): FormData => {
+  const formData = new FormData();
+
+  Object.keys(data).forEach((key) => {
+    const value = data[key as keyof ProdukType];
+
+    if (key === "gambar_utama") {
+      // Only append gambar_utama if it's a File instance
+      if (value instanceof File) {
+        formData.append(key, value);
+      }
+      // Skip if null or not a File - don't send to backend
+    } else if (value !== null && value !== undefined) {
+      // For other fields, append if not null/undefined
+      formData.append(key, String(value));
+    }
+  });
+
+  return formData;
+};
+
+// Helper function to prepare data for JSON payload (when no file upload)
+const prepareJsonData = (data: ProdukType): Partial<ProdukType> => {
+  const jsonData: Partial<ProdukType> = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    const typedKey = key as keyof ProdukType;
+
+    if (typedKey === "gambar_utama") {
+      // Only include gambar_utama in JSON if it's not null and not a File
+      if (value !== null && !(value instanceof File)) {
+        jsonData[typedKey] = value;
+      }
+      // Skip if null - don't send to backend
+    } else if (value !== null && value !== undefined) {
+      jsonData[typedKey] = value;
+    }
+  }
+
+  return jsonData;
+};
+
 type Props = {
   page?: number;
   limit?: number;
@@ -116,11 +159,19 @@ const useProdukUMKM = create(
     addMyProduk: async (row: ProdukType) => {
       const token = await useLogin.getState().setToken();
       try {
+        // Check if we have a file to upload
+        const hasFile = row.gambar_utama instanceof File;
+        const payload = hasFile ? createFormData(row) : prepareJsonData(row);
+
         const res = await crud({
           method: "post",
           url: `/produk/create_my_product/`,
-          headers: { Authorization: `Bearer ${token}` },
-          data: row,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Let axios set the Content-Type for FormData
+            ...(hasFile ? {} : { "Content-Type": "application/json" }),
+          },
+          data: payload,
         });
         set((prevState) => ({
           dtProduk: {
@@ -171,11 +222,19 @@ const useProdukUMKM = create(
     updateData: async (id, row) => {
       const token = await useLogin.getState().setToken();
       try {
+        // Check if we have a file to upload
+        const hasFile = row.gambar_utama instanceof File;
+        const payload = hasFile ? createFormData(row) : prepareJsonData(row);
+
         const response = await crud({
           method: "PUT",
           url: `/produk/${id}/update_my_product/`,
-          headers: { Authorization: `Bearer ${token}` },
-          data: row,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Let axios set the Content-Type for FormData
+            ...(hasFile ? {} : { "Content-Type": "application/json" }),
+          },
+          data: payload,
         });
         set((prevState) => ({
           dtProduk: {

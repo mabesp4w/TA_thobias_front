@@ -53,6 +53,7 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
     "Harga",
     "Stok",
     "Satuan",
+    "Gambar",
     "Aktif",
     "Aksi",
   ];
@@ -62,6 +63,7 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
     "harga",
     "stok",
     "satuan",
+    "gambar_utama",
     "aktif",
   ];
 

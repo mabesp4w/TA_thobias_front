@@ -63,8 +63,8 @@ const Content = () => {
         <DeleteModal setDelete={setDelete} />
         <div className="mb-4 flex justify-between">
           <p>
-            Silahkan Mengolah data {halaman}. Salin link dari youtube untuk
-            menambahkan kategoriProduk.
+            Silahkan Mengolah data {halaman}. Anda dapat menambahkan, mengedit,
+            menghapus kategoriProduk.
           </p>
 
           <button className="btn btn-primary" onClick={handleTambah}>

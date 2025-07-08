@@ -1,13 +1,7 @@
-/**
- * eslint-disable @typescript-eslint/no-unused-vars
- *
- * @format
- */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /** @format */
 
 "use client";
+import { BASE_URL } from "@/services/baseURL";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import Resizer from "react-image-file-resizer";
@@ -145,7 +139,7 @@ const InputFile: FC<Props> = ({
 
         {fileEdit && name !== "file" && name !== "file_materi" && (
           <div>
-            <Image src={fileEdit} width={100} height={100} alt="" />
+            <Image src={BASE_URL + fileEdit} width={100} height={100} alt="" />
           </div>
         )}
       </div>

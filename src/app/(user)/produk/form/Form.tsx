@@ -41,6 +41,7 @@ const Form = ({ dtEdit, halaman }: Props) => {
     setValue("bahan_baku", "");
     setValue("metode_produksi", "");
     setValue("aktif", true);
+    setValue("gambar_utama", null);
   };
 
   useEffect(() => {

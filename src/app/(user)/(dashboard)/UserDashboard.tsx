@@ -81,30 +81,6 @@ const UserDashboard = () => {
           </Link>
         ))}
       </div>
-
-      {/* Quick Stats */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Ringkasan</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Total Produk</div>
-            <div className="stat-value text-primary">25</div>
-            <div className="stat-desc">Produk aktif</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Penjualan Hari Ini</div>
-            <div className="stat-value text-secondary">Rp 5.2M</div>
-            <div className="stat-desc">↗︎ 5% dari kemarin</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-lg">
-            <div className="stat-title">Lokasi Penjualan</div>
-            <div className="stat-value">8</div>
-            <div className="stat-desc">Lokasi aktif</div>
-          </div>
-        </div>
-      </div>
     </section>
   );
 };

@@ -63,8 +63,8 @@ const Content = () => {
         <DeleteModal setDelete={setDelete} />
         <div className="mb-4 flex justify-between">
           <p>
-            Silahkan Mengolah data {halaman}. Salin link dari youtube untuk
-            menambahkan user.
+            Silahkan Mengolah data {halaman}. Anda dapat menambahkan, mengedit,
+            menghapus user.
           </p>
 
           <button className="btn btn-primary" onClick={handleTambah}>

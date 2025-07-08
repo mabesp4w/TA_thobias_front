@@ -2,6 +2,7 @@
 
 import InputText from "@/components/input/InputText";
 import InputTextarea from "@/components/input/InputTextarea";
+import InputFile from "@/components/input/InputFile"; // Import InputFile
 
 import { ProdukType } from "@/types";
 import { FC, useEffect, useState } from "react";
@@ -18,7 +19,14 @@ type Props = {
   setValue: any;
 };
 
-const BodyForm: FC<Props> = ({ register, errors, control }) => {
+const BodyForm: FC<Props> = ({
+  register,
+  errors,
+  control,
+  watch,
+  setValue,
+  dtEdit,
+}) => {
   const { setKategori, dtKategori } = useKategoriApi();
   const [IsLoading, setIsLoading] = useState(false);
   // effect provinsi
@@ -82,6 +90,20 @@ const BodyForm: FC<Props> = ({ register, errors, control }) => {
         required
         errors={errors.satuan}
         placeholder="pcs, kg, liter, dll"
+      />
+
+      {/* Tambahkan InputFile untuk gambar_utama */}
+      <InputFile
+        label="Gambar Produk"
+        name="gambar_utama"
+        register={register}
+        watch={watch}
+        setValue={setValue}
+        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+        addClass="col-span-8"
+        errors={errors.gambar_utama}
+        fileEdit={dtEdit?.gambar_utama}
+        size="file-input-md"
       />
 
       <InputTextarea

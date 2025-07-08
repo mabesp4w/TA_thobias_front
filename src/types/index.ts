@@ -78,6 +78,7 @@ export interface ProdukType {
   aktif: boolean;
   tgl_dibuat: string; // DateTime
   tgl_update: string; // DateTime
+  gambar_utama?: File | string | null;
 }
 
 export interface LokasiPenjualanType {
