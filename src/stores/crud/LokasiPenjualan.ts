@@ -111,6 +111,7 @@ const useLokasiPenjualan = create(
       search,
       sortby,
       order,
+      kategori_lokasi,
     }) => {
       const token = await useLogin.getState().setToken();
       try {
@@ -119,16 +120,17 @@ const useLokasiPenjualan = create(
           url: `/lokasi-penjualan/`,
           headers: { Authorization: `Bearer ${token}` },
           params: {
-            limit,
+            per_page: limit,
             page,
             search,
             sortby,
             order,
+            kategori_lokasi,
           },
         });
         set((state) => ({
           ...state,
-          dtLokasiPenjualan: response.data.data,
+          dtLokasiPenjualan: response.data,
         }));
         return {
           status: "berhasil",
@@ -277,7 +279,7 @@ const useLokasiPenjualan = create(
           url: `/lokasi-penjualan/my_locations/`,
           headers: { Authorization: `Bearer ${token}` },
           params: {
-            limit,
+            per_page: limit,
             page,
             search,
             sortby,

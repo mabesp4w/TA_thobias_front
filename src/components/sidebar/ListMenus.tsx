@@ -65,8 +65,8 @@ const setAdminMenus = () => {
           href: adminUrl("/umkm/profile"),
         },
         {
-          name: "Lokasi",
-          href: adminUrl("/umkm/pemetaan-umkm"),
+          name: "Lokasi Penjualan",
+          href: adminUrl("/umkm/lokasi-penjualan"),
         },
       ],
     },

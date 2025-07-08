@@ -1,13 +1,12 @@
 /** @format */
 
 "use client";
-import UMKMLocationMap from "@/components/map/UMKMLocationMap";
-import ModalDef from "@/components/modal/ModalDef";
 import PaginationDef from "@/components/pagination/PaginationDef";
 import TableDef from "@/components/table/TableDef";
 import useLokasiPenjualan from "@/stores/crud/LokasiPenjualan";
+import { LokasiPenjualanType } from "@/types";
 import { useSearchParams } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 
 type DeleteProps = {
   id?: number | string;
@@ -15,12 +14,12 @@ type DeleteProps = {
 };
 
 type Props = {
-  setDelete: ({ id, isDelete }: DeleteProps) => void;
-  setEdit: (row: any) => void;
+  setDelete?: ({ id, isDelete }: DeleteProps) => void;
+  setEdit?: (row: LokasiPenjualanType) => void;
 };
 
 const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
-  const { setLokasiPenjualan, dtLokasiPenjualan } = useLokasiPenjualan();
+  const { setLokasiPenjualan } = useLokasiPenjualan();
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const searchParams = useSearchParams();
@@ -28,41 +27,55 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
   const order = searchParams.get("order") || "";
   const search = searchParams.get("cari") || "";
 
-  const fetchDataLokasiPenjualan = async () => {
-    await setLokasiPenjualan({
-      page,
-      search,
-      sortby,
-      order,
-    });
-    setIsLoading(false);
-  };
+  // state
+  const [dtLokasiPenjualan, setDtLokasiPenjualan] = useState<any>();
+
+  const fetchDataLokasiPenjualan = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const dataLokasiPenjualan = await setLokasiPenjualan({
+        page,
+        search,
+        sortby,
+        order,
+      });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      setDtLokasiPenjualan(dataLokasiPenjualan.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, search, sortby, order, setLokasiPenjualan]);
 
   useEffect(() => {
     fetchDataLokasiPenjualan();
-    return () => {};
-  }, [page]);
+  }, [fetchDataLokasiPenjualan]);
 
   useEffect(() => {
     setPage(1);
-    fetchDataLokasiPenjualan();
   }, [search, sortby, order]);
 
   const headTable = [
     "No",
     "Nama Lokasi",
-    "Tipe Lokasi",
-    "Alamat",
+    "Kategori Lokasi",
+    "Kabupaten",
     "Kecamatan",
+    "Alamat",
     "Telepon",
-    "Aksi",
+    "Aktif",
   ];
+
   const tableBodies = [
     "nm_lokasi",
-    "tipe_lokasi",
+    "kategori_lokasi_nama",
+    "kabupaten_nama",
+    "kecamatan_nama",
     "alamat",
-    "kecamatan_detail.nm_kecamatan",
     "tlp_pengelola",
+    "aktif",
   ];
 
   if (isLoading) {
@@ -73,18 +86,23 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
     );
   }
 
+  // Handle empty data
+  if (!dtLokasiPenjualan?.data || dtLokasiPenjualan.data.length === 0) {
+    return (
+      <div className="h-full flex justify-center items-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">Tidak ada data lokasi penjualan</p>
+          <p className="text-sm text-gray-400">
+            Klik tombol &quot;Tambah Lokasi&quot; untuk menambahkan lokasi baru
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex-col max-w-full h-full overflow-auto">
       <div className="overflow-hidden h-full flex flex-col">
-        <ModalDef id="showMapUMKMLocation" title={`Tampilkan Peta`} size="lg">
-          <UMKMLocationMap
-            initialLat={-2.5919}
-            initialLng={140.6697}
-            enableDraggableMarker={false}
-            lokasiPenjualan={dtLokasiPenjualan?.data}
-            showControl={false}
-          />
-        </ModalDef>
         <div className="overflow-auto grow">
           <TableDef
             headTable={headTable}
@@ -94,6 +112,8 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
             limit={10}
             setEdit={setEdit}
             setDelete={setDelete}
+            hapus={false}
+            ubah={false}
           />
         </div>
         {dtLokasiPenjualan?.last_page > 1 && (
