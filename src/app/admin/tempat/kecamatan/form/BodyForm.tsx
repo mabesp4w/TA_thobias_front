@@ -29,7 +29,7 @@ const BodyForm: FC<Props> = ({ register, errors, control }) => {
   return (
     <>
       <InputText
-        label={`Nama Kecamatan/Kota`}
+        label={`Nama Distrik`}
         name="nm_kecamatan"
         register={register}
         addClass="col-span-8"

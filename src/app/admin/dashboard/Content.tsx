@@ -22,7 +22,7 @@ const Content = () => {
   const menuItems = [
     {
       title: "Data Wilayah",
-      description: "Kelola data provinsi, kabupaten, dan kecamatan",
+      description: "Kelola data provinsi, kabupaten, dan distrik",
       icon: <BiMap className="h-8 w-8" />,
       href: "/admin/tempat",
       color: "bg-blue-500",

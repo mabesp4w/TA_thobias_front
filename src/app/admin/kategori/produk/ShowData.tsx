@@ -53,8 +53,8 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
   }, [search, sortby, order]);
 
   // table
-  const headTable = ["No", "Nama Kategori", "Aksi"];
-  const tableBodies = ["nm_kategori"];
+  const headTable = ["No", "Nama Kategori", "Jasa", "Aksi"];
+  const tableBodies = ["nm_kategori", "jasa"];
 
   if (isLoading) {
     return (

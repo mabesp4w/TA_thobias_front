@@ -54,6 +54,7 @@ export interface LokasiUMKMType {
 export interface KategoriProdukType {
   id: string; // UUID
   nm_kategori: string;
+  jasa?: string;
   desc?: string; // Optional
 }
 
@@ -70,8 +71,10 @@ export interface ProdukType {
   kategori_detail: KategoriProdukType; // ForeignKey to KategoriProduk
   nm_produk: string;
   desc: string;
-  harga: number; // DecimalField
-  stok: number; // PositiveIntegerField
+  harga: number | string; // DecimalField
+  biaya_upah: number | string; // DecimalField
+  biaya_produksi: number | string; // DecimalField
+  stok: number | string; // PositiveIntegerField
   satuan: string;
   bahan_baku?: string; // Optional
   metode_produksi?: string; // Optional

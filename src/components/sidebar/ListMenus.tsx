@@ -30,7 +30,7 @@ const setAdminMenus = () => {
           href: adminUrl("/tempat/kabupaten"),
         },
         {
-          name: "Kecamatan",
+          name: "Distrik",
           href: adminUrl("/tempat/kecamatan"),
         },
       ],

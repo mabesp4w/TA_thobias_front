@@ -66,7 +66,7 @@ const BodyForm: FC<Props> = ({
         label="Harga"
         name="harga"
         register={register}
-        addClass="col-span-4"
+        addClass="col-span-8 md:col-span-4"
         required
         errors={errors.harga}
         type="currency"
@@ -76,7 +76,7 @@ const BodyForm: FC<Props> = ({
         label="Stok"
         name="stok"
         register={register}
-        addClass="col-span-4"
+        addClass="col-span-4 md:col-span-2"
         required
         type="number"
         errors={errors.stok}
@@ -86,10 +86,30 @@ const BodyForm: FC<Props> = ({
         label="Satuan"
         name="satuan"
         register={register}
-        addClass="col-span-4"
+        addClass="col-span-4 md:col-span-2"
         required
         errors={errors.satuan}
         placeholder="pcs, kg, liter, dll"
+      />
+
+      <InputText
+        label="Biaya Upah"
+        name="biaya_upah"
+        register={register}
+        addClass="col-span-8 md:col-span-4"
+        required
+        errors={errors.biaya_upah}
+        type="currency"
+      />
+
+      <InputText
+        label="Biaya Produksi"
+        name="biaya_produksi"
+        register={register}
+        addClass="col-span-8 md:col-span-4"
+        required
+        errors={errors.biaya_produksi}
+        type="currency"
       />
 
       {/* Tambahkan InputFile untuk gambar_utama */}

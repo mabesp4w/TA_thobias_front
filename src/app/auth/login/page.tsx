@@ -94,11 +94,14 @@ const Login = () => {
               Selamat datang di
             </h5>
             <h3 className="text-center mt-2 md:text-2xl text-base text-white font-extrabold">
-              Sistem Pelaporan Penjualan UMKM WWF
+              SISTEM MONITORING PEMASARAN DAN OPERASIONAL
+            </h3>
+            <h3 className="text-center mt-2 md:text-2xl text-base text-white font-extrabold">
+              UMKM DAMPINGAN YAYASAN WWF INDONESIA
             </h3>
           </div>
           <p className="text-center mt-2 text-[10px] text-gray-100 text-base">
-            Silahkan login untuk mendapatkan akses ke halaman admin
+            Silahkan login untuk mendapatkan akses ke halaman dashboard
           </p>
           <span>
             {error && <p className="text-red-600 text-center">{error}</p>}

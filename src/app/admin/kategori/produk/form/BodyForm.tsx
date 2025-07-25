@@ -25,6 +25,13 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         required
         errors={errors.nm_kategori}
       />
+      <InputText
+        label={`Jasa`}
+        name="jasa"
+        register={register}
+        addClass="col-span-8"
+        errors={errors.jasa}
+      />
     </>
   );
 };

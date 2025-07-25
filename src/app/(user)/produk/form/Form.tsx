@@ -35,8 +35,10 @@ const Form = ({ dtEdit, halaman }: Props) => {
     setValue("nm_produk", "");
     setValue("kategori", "");
     setValue("desc", "");
-    setValue("harga", 0);
-    setValue("stok", 0);
+    setValue("harga", "");
+    setValue("stok", "");
+    setValue("biaya_upah", "");
+    setValue("biaya_produksi", "");
     setValue("satuan", "");
     setValue("bahan_baku", "");
     setValue("metode_produksi", "");
@@ -52,6 +54,8 @@ const Form = ({ dtEdit, halaman }: Props) => {
       setValue("desc", dtEdit.desc);
       setValue("harga", dtEdit.harga);
       setValue("stok", dtEdit.stok);
+      setValue("biaya_upah", dtEdit.biaya_upah);
+      setValue("biaya_produksi", dtEdit.biaya_produksi);
       setValue("satuan", dtEdit.satuan);
       setValue("bahan_baku", dtEdit.bahan_baku);
       setValue("metode_produksi", dtEdit.metode_produksi);

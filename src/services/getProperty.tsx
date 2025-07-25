@@ -4,6 +4,7 @@ import Image from "next/image";
 import moment from "moment";
 import Link from "next/link";
 import { BASE_URL } from "./baseURL";
+import showRupiah from "./rupiah";
 
 const getYouTubeVideoId = (url: string) => {
   const regExp =
@@ -61,8 +62,6 @@ const getProperty = (obj: any, prop: any, index: number, setIndexBox: any) => {
       currentObj = currentObj[current];
       i++;
     }
-
-    // Handle hasil akhir
 
     // Date processing
     const dateProps = ["announcement_date", "news_date", "tgl_bergabung"];
@@ -136,6 +135,12 @@ const getProperty = (obj: any, prop: any, index: number, setIndexBox: any) => {
     const booleanProps = ["aktif"];
     if (booleanProps.includes(prop)) {
       return currentObj ? "Ya" : "Tidak";
+    }
+
+    // rupiah
+    const rupiahProps = ["harga", "biaya_upah", "biaya_produksi"];
+    if (rupiahProps.includes(prop)) {
+      return showRupiah(currentObj);
     }
 
     // Default case

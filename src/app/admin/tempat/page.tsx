@@ -29,8 +29,8 @@ const Content = () => {
       color: "bg-green-500",
     },
     {
-      title: "Kecamatan",
-      description: "Kelola data kecamatan",
+      title: "Distrik",
+      description: "Kelola data distrik",
       icon: <BiMap className="h-8 w-8" />,
       href: "/admin/tempat/kecamatan",
       color: "bg-yellow-500",
@@ -42,7 +42,7 @@ const Content = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Data Tempat</h1>
         <p className="text-gray-600">
-          Kelola data provinsi, kabupaten, dan kecamatan
+          Kelola data provinsi, kabupaten, dan distrik
         </p>
       </div>
 

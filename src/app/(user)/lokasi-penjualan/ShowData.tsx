@@ -62,7 +62,7 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
     "Nama Lokasi",
     "Kategori Lokasi",
     "Alamat",
-    "Kecamatan",
+    "Distrik",
     "Telepon",
     "Status",
     "Aksi",

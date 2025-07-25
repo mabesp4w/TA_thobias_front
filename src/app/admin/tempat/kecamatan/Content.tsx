@@ -11,7 +11,7 @@ import { showModal } from "@/utils/modalHelper";
 import { useWelcomeContext } from "@/context/WelcomeContext";
 import DeleteModal from "@/components/modal/DeleteModal";
 
-const halaman = "Kecamatan";
+const halaman = "Distrik";
 
 // type setDelete
 type Delete = {
@@ -64,7 +64,7 @@ const Content = () => {
         <div className="mb-4 flex justify-between">
           <p>
             Silahkan Mengolah data {halaman}. Anda dapat menambahkan, mengedit,
-            menghapus kecamatan.
+            menghapus distrik.
           </p>
 
           <button className="btn btn-primary" onClick={handleTambah}>

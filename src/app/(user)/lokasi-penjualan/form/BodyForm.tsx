@@ -92,9 +92,9 @@ const BodyForm: FC<Props> = ({ register, errors, control, watch }) => {
           errors={errors.kecamatan}
           body={["id", "nm_kecamatan"]}
           dataDb={dtKecamatan}
-          label="Kecamatan"
+          label="Distrik"
           menuPosition="absolute"
-          placeholder="Pilih Kecamatan"
+          placeholder="Pilih Distrik"
         />
       )}
 

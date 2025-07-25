@@ -53,7 +53,7 @@ const ShowData: FC<Props> = ({ setDelete, setEdit }) => {
   }, [search, sortby, order]);
 
   // table
-  const headTable = ["No", "Nama Kecamatan", "Kabupaten", "Aksi"];
+  const headTable = ["No", "Nama Distrik", "Kabupaten", "Aksi"];
   const tableBodies = ["nm_kecamatan", "kabupaten_nama"];
 
   if (isLoading) {

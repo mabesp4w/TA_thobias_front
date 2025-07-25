@@ -1,10 +1,11 @@
 /** @format */
-
+// components/input/InputFile.tsx
 "use client";
 import { BASE_URL } from "@/services/baseURL";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import Resizer from "react-image-file-resizer";
+import CameraCapture from "./CameraCapture";
+import FilePicker from "./FilePicker";
 
 type Props = {
   label?: string;
@@ -44,10 +45,10 @@ const InputFile: FC<Props> = ({
   watch,
   size = "file-input-md",
   labelClass = "text-gray-700",
-  color = "",
 }) => {
   const [typeFile, setTypeFile] = useState<string>();
   const [myFile, setMyFile] = useState<any>(initialValue || "");
+  const [inputMode, setInputMode] = useState<"file" | "camera">("file");
 
   const watchValue = watch(name);
 
@@ -57,65 +58,91 @@ const InputFile: FC<Props> = ({
     }
   }, [watchValue]);
 
-  const resizeFile = (file: any) =>
-    new Promise(() => {
-      if (file) {
-        const splitType = file?.type?.split("/") || [];
-        const type = splitType[0];
-        if (type !== "image") {
-          return onSelectFile(file);
-        }
-        Resizer.imageFileResizer(
-          file,
-          500,
-          500,
-          splitType[1],
-          100,
-          0,
-          (uri) => {
-            onSelectFile(uri);
-          },
-          "file"
-        );
-      } else {
-        onSelectFile(null);
-      }
-    });
-  const onSelectFile = (file: any) => {
+  const onSelectFile = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         setMyFile(reader.result as string);
       };
+      const splitType = file?.type?.split("/") || [];
+      setTypeFile(splitType[0]);
+    } else {
+      setMyFile("");
+      setTypeFile("");
     }
-    const splitType = file?.type?.split("/") || [];
-    setTypeFile(splitType[0]);
     setValue(name, file);
   };
+
+  const handleModeChange = (mode: "file" | "camera") => {
+    setInputMode(mode);
+    // Reset file when changing modes
+    setMyFile("");
+    setValue(name, null);
+  };
+
+  const handleCameraCapture = (file: File) => {
+    onSelectFile(file);
+    setInputMode("file"); // Switch back to file mode after capture
+  };
+
+  const handleCameraCancel = () => {
+    setInputMode("file"); // Switch back to file mode
+  };
+
+  const handleFileClear = () => {
+    setMyFile("");
+    setValue(name, null);
+  };
+
   return (
     <div className={`flex flex-col my-1 ${addClass}`}>
       {label && (
         <div className="flex gap-x-2">
           <label className={`text-sm ${labelClass}`}>{label}</label>
           {required && <span className="ml-1 text-red-600">*</span>}
-          {/* optional */}
           {!required && (
             <span className={`text-sm ${labelClass}`}>(Optional)</span>
           )}
         </div>
       )}
 
-      <input
-        className={`file-input file-input-bordered w-full ${size} ${color}`}
-        id="fileInput"
-        type="file"
-        accept={accept}
-        onChange={(event: any) => {
-          const selectedFile = event.target?.files[0] || null;
-          resizeFile(selectedFile);
-        }}
-      />
+      {/* Mode Toggle */}
+      <div className="flex gap-2 mb-3">
+        <button
+          type="button"
+          className={`btn btn-sm ${
+            inputMode === "file" ? "btn-primary" : "btn-outline"
+          }`}
+          onClick={() => handleModeChange("file")}
+        >
+          📁 Pilih File
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm ${
+            inputMode === "camera" ? "btn-primary" : "btn-outline"
+          }`}
+          onClick={() => handleModeChange("camera")}
+        >
+          📷 Kamera
+        </button>
+      </div>
+
+      {/* File Input Mode */}
+      {inputMode === "file" && (
+        <FilePicker accept={accept} onFileSelect={onSelectFile} size={size} />
+      )}
+
+      {/* Camera Mode */}
+      {inputMode === "camera" && (
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onCancel={handleCameraCancel}
+        />
+      )}
+
+      {/* Hidden input for form registration */}
       <input
         type="hidden"
         id={label}
@@ -123,27 +150,45 @@ const InputFile: FC<Props> = ({
           required,
         })}
       />
-      {/* review file */}
-      <div className="flex gap-4 mt-2">
-        {/* jika myFile type image */}
-        {myFile && typeFile === "image" && (
-          <Image
-            className="rounded-lg"
-            src={myFile as string}
-            width={100}
-            height={100}
-            alt=""
-          />
-        )}
-        {/* jika fileEdit ada */}
 
-        {fileEdit && name !== "file" && name !== "file_materi" && (
-          <div>
-            <Image src={BASE_URL + fileEdit} width={100} height={100} alt="" />
+      {/* File Preview */}
+      <div className="flex gap-4 mt-2">
+        {myFile && typeFile === "image" && (
+          <div className="relative">
+            <Image
+              className="rounded-lg border"
+              src={myFile as string}
+              width={100}
+              height={100}
+              alt="Preview"
+            />
+            <button
+              type="button"
+              className="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error"
+              onClick={handleFileClear}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {fileEdit && name !== "file" && name !== "file_materi" && !myFile && (
+          <div className="relative">
+            <Image
+              src={BASE_URL + fileEdit}
+              width={100}
+              height={100}
+              alt="Current file"
+              className="rounded-lg border"
+            />
+            <span className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1 rounded">
+              Current
+            </span>
           </div>
         )}
       </div>
-      {/* jika type password */}
+
+      {/* Error Message */}
       {errors?.type === "required" && (
         <p className="text-red-500 font-inter italic text-sm">
           {label} tidak boleh kosong
