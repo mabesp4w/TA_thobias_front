@@ -19,6 +19,14 @@ const BULAN_OPTIONS = [
   { value: 12, label: "Desember" },
 ];
 
+const PERIODE_OPTIONS = [
+  { value: "pertahun", label: "Per Tahun" },
+  { value: "perbulan", label: "Per Bulan" },
+  { value: "periode", label: "Periode" },
+];
+
+type PeriodeType = "pertahun" | "perbulan" | "periode";
+
 const FilterGrafik: React.FC = () => {
   const {
     filters,
@@ -28,11 +36,15 @@ const FilterGrafik: React.FC = () => {
     isLoadingRingkasan,
     clearFilters,
     fetchListUMKM,
-    applyFiltersAndFetch, // Gunakan action baru
+    applyFiltersAndFetch,
   } = useGrafikStore();
 
   const [localFilters, setLocalFilters] = useState<FilterGrafikType>(filters);
   const [isApplying, setIsApplying] = useState(false);
+  const [tipeperiode, setTipePeriode] = useState<PeriodeType>("pertahun");
+  const [selectedBulan, setSelectedBulan] = useState<number | undefined>(
+    undefined
+  );
 
   // Load list UMKM saat komponen mount
   useEffect(() => {
@@ -56,10 +68,58 @@ const FilterGrafik: React.FC = () => {
     setLocalFilters(newFilters);
   };
 
+  const handleTipePeriodeChange = (newTipe: PeriodeType) => {
+    setTipePeriode(newTipe);
+
+    // Reset filter berdasarkan tipe periode
+    const updatedFilters = { ...localFilters };
+
+    switch (newTipe) {
+      case "pertahun":
+        // Hanya tahun, reset bulan
+        updatedFilters.bulan_start = undefined;
+        updatedFilters.bulan_end = undefined;
+        setSelectedBulan(undefined);
+        break;
+      case "perbulan":
+        // Tahun dan bulan yang sama untuk start dan end
+        if (selectedBulan) {
+          updatedFilters.bulan_start = selectedBulan;
+          updatedFilters.bulan_end = selectedBulan;
+        } else {
+          updatedFilters.bulan_start = undefined;
+          updatedFilters.bulan_end = undefined;
+        }
+        break;
+      case "periode":
+        // Biarkan user pilih bulan_start dan bulan_end secara terpisah
+        // Jika sebelumnya perbulan, reset bulan_end agar tidak sama dengan start
+        if (updatedFilters.bulan_start === updatedFilters.bulan_end) {
+          updatedFilters.bulan_end = undefined;
+        }
+        setSelectedBulan(undefined);
+        break;
+    }
+
+    setLocalFilters(updatedFilters);
+  };
+
+  const handleBulanChange = (bulan: number | undefined) => {
+    setSelectedBulan(bulan);
+
+    if (tipeperiode === "perbulan") {
+      // Untuk perbulan, bulan_start dan bulan_end sama
+      setLocalFilters({
+        ...localFilters,
+        bulan_start: bulan,
+        bulan_end: bulan,
+      });
+    }
+  };
+
   const handleApplyFilter = async () => {
     setIsApplying(true);
     try {
-      // Gunakan action baru yang menggabungkan setFilters dan fetch
       await applyFiltersAndFetch(localFilters);
     } catch (error) {
       console.error("Error applying filters:", error);
@@ -71,11 +131,12 @@ const FilterGrafik: React.FC = () => {
   const handleClearFilter = async () => {
     const defaultFilters = { tahun: currentYear };
     setLocalFilters(defaultFilters);
+    setTipePeriode("pertahun");
+    setSelectedBulan(undefined);
     clearFilters();
 
     setIsApplying(true);
     try {
-      // Apply default filters dan fetch data
       await applyFiltersAndFetch(defaultFilters);
     } catch (error) {
       console.error("Error clearing filters:", error);
@@ -86,13 +147,121 @@ const FilterGrafik: React.FC = () => {
 
   const isLoadingAny = isLoading || isLoadingRingkasan || isApplying;
 
+  const renderPeriodeFields = () => {
+    switch (tipeperiode) {
+      case "pertahun":
+        return null; // Hanya menampilkan tahun
+
+      case "perbulan":
+        return (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Bulan
+            </label>
+            <select
+              value={selectedBulan || ""}
+              onChange={(e) =>
+                handleBulanChange(
+                  e.target.value ? parseInt(e.target.value) : undefined
+                )
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={isLoadingAny}
+            >
+              <option value="">Pilih Bulan</option>
+              {BULAN_OPTIONS.map((bulan) => (
+                <option key={bulan.value} value={bulan.value}>
+                  {bulan.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
+
+      case "periode":
+        return (
+          <>
+            {/* Filter Bulan Mulai */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bulan Mulai
+              </label>
+              <select
+                value={localFilters.bulan_start || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "bulan_start",
+                    e.target.value ? parseInt(e.target.value) : undefined
+                  )
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={isLoadingAny}
+              >
+                <option value="">Pilih Bulan Mulai</option>
+                {BULAN_OPTIONS.map((bulan) => (
+                  <option key={bulan.value} value={bulan.value}>
+                    {bulan.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Filter Bulan Akhir */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bulan Akhir
+              </label>
+              <select
+                value={localFilters.bulan_end || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "bulan_end",
+                    e.target.value ? parseInt(e.target.value) : undefined
+                  )
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={!localFilters.bulan_start || isLoadingAny}
+              >
+                <option value="">Sampai Akhir Tahun</option>
+                {BULAN_OPTIONS.filter(
+                  (bulan) =>
+                    !localFilters.bulan_start ||
+                    bulan.value >= localFilters.bulan_start
+                ).map((bulan) => (
+                  <option key={bulan.value} value={bulan.value}>
+                    {bulan.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const getGridCols = () => {
+    switch (tipeperiode) {
+      case "pertahun":
+        return "lg:grid-cols-4"; // UMKM, Tipe Periode, Tahun, Buttons
+      case "perbulan":
+        return "lg:grid-cols-5"; // UMKM, Tipe Periode, Tahun, Bulan, Buttons
+      case "periode":
+        return "lg:grid-cols-6"; // UMKM, Tipe Periode, Tahun, Bulan Mulai, Bulan Akhir, Buttons
+      default:
+        return "lg:grid-cols-4";
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
         Filter Grafik Penjualan
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${getGridCols()} gap-4`}>
         {/* Filter UMKM */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -108,6 +277,27 @@ const FilterGrafik: React.FC = () => {
             {dtListUMKM.map((umkm) => (
               <option key={umkm.id} value={umkm.id}>
                 {umkm.nama_umkm}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Filter Tipe Periode */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tipe Periode
+          </label>
+          <select
+            value={tipeperiode}
+            onChange={(e) =>
+              handleTipePeriodeChange(e.target.value as PeriodeType)
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isLoadingAny}
+          >
+            {PERIODE_OPTIONS.map((periode) => (
+              <option key={periode.value} value={periode.value}>
+                {periode.label}
               </option>
             ))}
           </select>
@@ -134,59 +324,8 @@ const FilterGrafik: React.FC = () => {
           </select>
         </div>
 
-        {/* Filter Bulan Mulai */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Bulan Mulai
-          </label>
-          <select
-            value={localFilters.bulan_start || ""}
-            onChange={(e) =>
-              handleFilterChange(
-                "bulan_start",
-                e.target.value ? parseInt(e.target.value) : undefined
-              )
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={isLoadingAny}
-          >
-            <option value="">Semua Bulan</option>
-            {BULAN_OPTIONS.map((bulan) => (
-              <option key={bulan.value} value={bulan.value}>
-                {bulan.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Filter Bulan Akhir */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Bulan Akhir
-          </label>
-          <select
-            value={localFilters.bulan_end || ""}
-            onChange={(e) =>
-              handleFilterChange(
-                "bulan_end",
-                e.target.value ? parseInt(e.target.value) : undefined
-              )
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={!localFilters.bulan_start || isLoadingAny}
-          >
-            <option value="">Sampai Akhir</option>
-            {BULAN_OPTIONS.filter(
-              (bulan) =>
-                !localFilters.bulan_start ||
-                bulan.value >= localFilters.bulan_start
-            ).map((bulan) => (
-              <option key={bulan.value} value={bulan.value}>
-                {bulan.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Render periode fields berdasarkan tipe */}
+        {renderPeriodeFields()}
 
         {/* Action Buttons */}
         <div className="flex flex-col justify-end space-y-2">
@@ -217,10 +356,15 @@ const FilterGrafik: React.FC = () => {
       {/* Info Filter Aktif */}
       {(localFilters.umkm_id ||
         localFilters.bulan_start ||
-        localFilters.bulan_end) && (
+        localFilters.bulan_end ||
+        tipeperiode !== "pertahun") && (
         <div className="mt-4 p-3 bg-blue-50 rounded-md">
           <p className="text-sm text-blue-800">
             <span className="font-medium">Filter Aktif:</span>
+            <span className="ml-2 inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded text-xs">
+              Periode:{" "}
+              {PERIODE_OPTIONS.find((p) => p.value === tipeperiode)?.label}
+            </span>
             {localFilters.umkm_id && (
               <span className="ml-2 inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded text-xs">
                 UMKM:{" "}
@@ -230,7 +374,13 @@ const FilterGrafik: React.FC = () => {
                 }
               </span>
             )}
-            {localFilters.bulan_start && (
+            {tipeperiode === "perbulan" && selectedBulan && (
+              <span className="ml-2 inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded text-xs">
+                Bulan:{" "}
+                {BULAN_OPTIONS.find((b) => b.value === selectedBulan)?.label}
+              </span>
+            )}
+            {tipeperiode === "periode" && localFilters.bulan_start && (
               <span className="ml-2 inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded text-xs">
                 Mulai:{" "}
                 {
@@ -240,7 +390,7 @@ const FilterGrafik: React.FC = () => {
                 }
               </span>
             )}
-            {localFilters.bulan_end && (
+            {tipeperiode === "periode" && localFilters.bulan_end && (
               <span className="ml-2 inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded text-xs">
                 Sampai:{" "}
                 {
