@@ -77,14 +77,6 @@ const LokasiBreakdownModal = ({ data, onClose, formatCurrency }: Props) => {
                 {formatCurrency(parseFloat(umkmData.total_pengeluaran || 0))}
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <div className="text-sm text-blue-600 font-medium">
-                Laba Kotor
-              </div>
-              <div className="text-lg font-bold text-blue-700">
-                {formatCurrency(parseFloat(umkmData.laba_kotor || 0))}
-              </div>
-            </div>
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
               <div className="text-sm text-purple-600 font-medium">
                 Total Lokasi
@@ -106,7 +98,6 @@ const LokasiBreakdownModal = ({ data, onClose, formatCurrency }: Props) => {
               const pengeluaranLokasi = parseFloat(
                 lokasi.total_pengeluaran || 0
               );
-              const labaKotorLokasi = parseFloat(lokasi.laba_kotor || 0);
               const kontribusi = parseFloat(lokasi.persentase_kontribusi || 0);
 
               return (
@@ -145,14 +136,6 @@ const LokasiBreakdownModal = ({ data, onClose, formatCurrency }: Props) => {
                       </div>
                       <div className="font-medium text-red-600 text-sm">
                         {formatCurrency(pengeluaranLokasi)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 mb-1">
-                        Laba Kotor
-                      </div>
-                      <div className="font-medium text-blue-600 text-sm">
-                        {formatCurrency(labaKotorLokasi)}
                       </div>
                     </div>
                     <div>
