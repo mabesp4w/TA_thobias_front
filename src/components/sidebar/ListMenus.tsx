@@ -1,6 +1,7 @@
 /** @format */
 
 import MenuType from "@/types/MenuType";
+import { UserPen } from "lucide-react";
 import { BiAbacus, BiCategory } from "react-icons/bi";
 import { BsBook, BsHouseDoor, BsInfoLg } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
@@ -84,6 +85,12 @@ const setAdminMenus = () => {
           href: adminUrl("/export-excel"),
         },
       ],
+    },
+    {
+      name: "Administrator",
+      href: adminUrl("/administrator"),
+      icon: <UserPen />,
+      slug: "administrator",
     },
   ];
 

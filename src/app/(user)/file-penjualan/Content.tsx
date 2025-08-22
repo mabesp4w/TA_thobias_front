@@ -60,14 +60,45 @@ const Content = () => {
         <Toaster />
         <Form dtEdit={dtEdit} halaman={halaman} />
         <DeleteModal setDelete={setDelete} />
-        <div className="mb-4 flex justify-between">
+        <div className="mb-4 flex flex-col gap-4">
+          {" "}
+          {/* Ubah dari flex justify-between jadi flex-col biar teks dan tombol nggak numpuk */}
           <p>
             Kelola file Excel detail penjualan Anda. Upload file untuk
             melaporkan penjualan secara batch.
           </p>
-          <button className="btn btn-primary" onClick={handleTambah}>
-            Upload File
-          </button>
+          <div className="p-4 bg-info/10 rounded-md">
+            {" "}
+            {/* Tambahin box info biar keliatan sebagai keterangan khusus, sesuaikan styling kalau pakai Tailwind/DaisyUI */}
+            <h3 className="font-bold mb-2">Panduan Upload File Penjualan:</h3>
+            <ol className="list-decimal list-inside space-y-1 text-sm">
+              <li>
+                Download template Excel di bawah ini untuk format yang benar.
+              </li>
+              <li>
+                Isi data penjualan Anda sesuai kolom-kolom di template (jangan
+                ubah header atau struktur).
+              </li>
+              <li>
+                Simpan file sebagai .xlsx, lalu klik &quot;Upload File&quot;
+                untuk submit.
+              </li>
+            </ol>
+          </div>
+          <div className="flex justify-end gap-2">
+            {" "}
+            {/* Tombol-tombol di kanan bawah */}
+            <a
+              href="/templates/daftar_produk_lokasi_penjualan.xlsx"
+              download="daftar_produk_lokasi_penjualan.xlsx"
+              className="btn btn-outline btn-secondary"
+            >
+              Download Template
+            </a>
+            <button className="btn btn-primary" onClick={handleTambah}>
+              Upload File
+            </button>
+          </div>
         </div>
       </div>
 

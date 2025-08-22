@@ -154,3 +154,17 @@ export interface LokasiPenjualanType {
   tgl_dibuat?: string;
   tgl_update?: string;
 }
+
+export interface AdministratorType {
+  id: string;
+  username: string;
+  first_name: string;
+  email: string;
+  password: string;
+  password_confirmation?: string;
+  show_password?: string;
+  is_staff?: boolean;
+  is_active?: boolean;
+  last_login?: string; // DateTime
+  date_joined?: string; // DateTime
+}
