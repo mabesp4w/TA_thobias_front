@@ -6,7 +6,7 @@ import DeviceTheme from "@/utils/DeviceTheme";
 
 export const metadata: Metadata = {
   title: "UMKM - WWF",
-  description: "Website UMKM WWF",
+  description: "Website Mengelola UMKM WWF",
   authors: {
     name: "SmartSpartacuS",
     url: "https://smart.satgar.my.id",

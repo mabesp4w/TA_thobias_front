@@ -23,7 +23,7 @@ const FormLogin: FC<Props> = ({ register, errors }) => {
         errors={errors.email}
         addClass="col-span-4"
         type="email"
-        labelClass="text-black"
+        labelClass="text-black "
         placeholder="Masukan Email"
       />
       <InputText
