@@ -38,21 +38,14 @@ const Content = () => {
       title: "Kategori Produk",
       description: "Kelola kategori produk UMKM",
       icon: <BiPackage className="h-8 w-8" />,
-      href: "/admin/kategori-produk",
+      href: "/admin/kategori/produk",
       color: "bg-purple-500",
-    },
-    {
-      title: "Lokasi UMKM",
-      description: "Pemetaan lokasi UMKM di seluruh wilayah",
-      icon: <BiLocationPlus className="h-8 w-8" />,
-      href: "/admin/umkm/pemetaan-umkm",
-      color: "bg-orange-500",
     },
     {
       title: "Lokasi Penjualan",
       description: "Pemetaan lokasi penjualan di seluruh wilayah",
       icon: <BiLocationPlus className="h-8 w-8" />,
-      href: "/admin/lokasi-penjualan",
+      href: "/admin/umkm/lokasi-penjualan",
       color: "bg-yellow-500",
     },
 
