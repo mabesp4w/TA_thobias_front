@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import useLogout from "@/stores/auth/logout";
 import handleLogout from "@/app/auth/logout/logout";
 import { useState } from "react";
+import { UserPen } from "lucide-react";
 
 interface SubMenuItem {
   title: string;
@@ -203,7 +204,15 @@ const UserMenu = () => {
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       ) : (
-        <div className="p-4 border-t border-base-300">
+        <div className="p-4 border-t border-base-300 flex flex-col">
+          {/* akun */}
+          <Link
+            href="/akun"
+            className="flex items-center gap-3 hover:bg-base-200 pl-4"
+          >
+            <UserPen className="h-5 w-5" />
+            <span>Akun</span>
+          </Link>
           <button
             onClick={() => handleLogout({ setLogout, setLoadLogout, router })}
             className="btn btn-ghost btn-block justify-start gap-3 text-error hover:bg-error/10"
