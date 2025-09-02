@@ -34,6 +34,8 @@ export interface ProfilUMKMType {
   tlp?: string; // Optional
   desc_bisnis?: string; // Optional
   tgl_bergabung: string; // DateTime
+  total_laki?: number; // Optional
+  total_perempuan?: number; // Optional
   user_detail?: UserType;
 }
 

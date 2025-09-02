@@ -65,7 +65,7 @@ const Form = ({ dtEdit, halaman }: Props) => {
     <ModalDef id="edit_profil" title={`Form ${halaman}`}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputText name="id" register={register} type="hidden" />
-        <div className="grid grid-cols-1 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <BodyForm
             register={register}
             errors={errors}

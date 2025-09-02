@@ -60,7 +60,12 @@ const Sidebar = () => {
     <aside className="bg-base-200 h-full flex flex-col w-56">
       {/* image */}
       <div className="relative h-32 w-40 mx-auto">
-        <Image src="/images/logo.png" alt="logo" fill className="" />
+        <Image
+          src="/images/wwf.jpg"
+          alt="logo"
+          fill
+          className="object-contain"
+        />
       </div>
       <ul className="menu p-4 text-lg rounded-box h-full overflow-auto block">
         {menus.map((menu, index) => (

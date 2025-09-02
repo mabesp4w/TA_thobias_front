@@ -67,7 +67,7 @@ const Navbar = () => {
           </button>
         </div>
         <Link href="/dashboard" className="btn btn-ghost text-xl normal-case">
-          <Image src="/images/logo.png" alt="Logo" width={70} height={70} />{" "}
+          <Image src="/images/wwf.jpg" alt="Logo" width={70} height={70} />{" "}
           Ruang Baca
         </Link>
       </div>

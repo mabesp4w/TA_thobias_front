@@ -46,10 +46,14 @@ const ShowData: FC<Props> = ({ setShow, setDelete }) => {
     fetchDataUMKM();
   }, [search, sortby, order]);
 
+  console.log({ dtProfilUMKM });
+
   const headTable = [
     "No",
     "Nama Bisnis",
     "Pemilik",
+    "Jumlah Laki-laki",
+    "Jumlah Perempuan",
     "Email",
     "Telepon",
     "Alamat",
@@ -58,6 +62,8 @@ const ShowData: FC<Props> = ({ setShow, setDelete }) => {
   const tableBodies = [
     "nm_bisnis",
     "user_detail.nama_lengkap",
+    "total_laki",
+    "total_perempuan",
     "user_detail.email",
     "tlp",
     "alamat",

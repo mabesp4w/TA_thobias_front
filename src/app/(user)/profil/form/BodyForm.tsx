@@ -24,6 +24,25 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         register={register}
         required
         errors={errors.nm_bisnis}
+        addClass="col-span-2"
+      />
+      <InputText
+        label="Jumlah Laki-laki"
+        name="total_laki"
+        register={register}
+        required
+        type="number"
+        errors={errors.total_laki}
+        addClass="col-span-1"
+      />
+      <InputText
+        label="Jumlah Perempuan"
+        name="total_perempuan"
+        register={register}
+        required
+        type="number"
+        errors={errors.total_perempuan}
+        addClass="col-span-1"
       />
       <InputText
         label="Nomor Telepon"
@@ -31,6 +50,7 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         register={register}
         required
         errors={errors.tlp}
+        addClass="col-span-2"
       />
       <InputTextarea
         label="Alamat"
@@ -38,12 +58,14 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         register={register}
         required
         errors={errors.alamat}
+        addClass="col-span-2"
       />
       <InputTextarea
         label="Deskripsi Bisnis"
         name="desc_bisnis"
         register={register}
         errors={errors.desc_bisnis}
+        addClass="col-span-2"
       />
     </>
   );

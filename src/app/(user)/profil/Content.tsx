@@ -60,6 +60,14 @@ const Content = () => {
                 <p>{profilData.user_detail?.first_name || "-"}</p>
               </div>
               <div>
+                <p className="font-bold">Jumlah Laki-laki</p>
+                <p>{profilData.total_laki || "-"}</p>
+              </div>
+              <div>
+                <p className="font-bold">Jumlah Perempuan</p>
+                <p>{profilData.total_perempuan || "-"}</p>
+              </div>
+              <div>
                 <p className="font-bold">Nomor Telepon</p>
                 <p>{profilData.tlp || "-"}</p>
               </div>
