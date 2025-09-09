@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import FormLogin from "./FormLogin";
+import Link from "next/link";
 
 type Inputs = {
   email: string;
@@ -37,7 +38,7 @@ const Login = () => {
           return router.push("/admin/dashboard");
         }
         if (role === "user") {
-          return router.push("/");
+          return router.push("/umkm/dashboard");
         }
       }
     }
@@ -73,7 +74,7 @@ const Login = () => {
       if (data.user.role === "admin") {
         return router.push("/admin/dashboard");
       } else {
-        return router.push("/");
+        return router.push("/umkm/dashboard");
       }
     }
 
@@ -128,6 +129,9 @@ const Login = () => {
               )}
             </div>
           </form>
+          <p className="text-center mt-2 text-[10px] text-gray-100 text-base cursor-pointer hover:text-primary underline">
+            <Link href="/">Kembali ke halaman utama</Link>
+          </p>
         </div>
       </div>
     </div>

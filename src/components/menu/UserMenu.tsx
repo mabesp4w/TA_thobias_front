@@ -44,47 +44,47 @@ const UserMenu = () => {
     {
       title: "Dashboard",
       icon: <BiHome className="h-5 w-5" />,
-      href: "/",
+      href: "/umkm/dashboard",
     },
     {
       title: "Profil Bisnis",
       icon: <BiStore className="h-5 w-5" />,
-      href: "/profil",
+      href: "/umkm/profil",
     },
     {
       title: "Produk",
       icon: <BiPackage className="h-5 w-5" />,
-      href: "/produk",
+      href: "/umkm/produk",
     },
     {
       title: "Lokasi Penjualan",
       icon: <BiLocationPlus className="h-5 w-5" />,
-      href: "/lokasi-penjualan",
+      href: "/umkm/lokasi-penjualan",
     },
     {
       title: "Laporan Penjualan",
       icon: <BiCart className="h-5 w-5" />,
-      href: "/laporan-penjualan",
+      href: "/umkm/laporan-penjualan",
     },
     {
       title: "File Laporan",
       icon: <BiCart className="h-5 w-5" />,
-      href: "/file-penjualan",
+      href: "/umkm/file-penjualan",
       subMenu: [
         {
           title: "Upload File",
-          href: "/file-penjualan",
+          href: "/umkm/file-penjualan",
         },
         {
           title: "Export Excel",
-          href: "/export-excel",
+          href: "/umkm/export-excel",
         },
       ],
     },
     {
       title: "Statistik",
       icon: <BiLineChart className="h-5 w-5" />,
-      href: "/statistik",
+      href: "/umkm/statistik",
     },
   ];
 
