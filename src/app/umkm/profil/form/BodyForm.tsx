@@ -67,6 +67,30 @@ const BodyForm: FC<Props> = ({ register, errors }) => {
         errors={errors.desc_bisnis}
         addClass="col-span-2"
       />
+      {/* fb_link */}
+      <InputText
+        label="Link Facebook"
+        name="fb_link"
+        register={register}
+        errors={errors.fb_link}
+        addClass="col-span-2"
+      />
+      {/* ig_link */}
+      <InputText
+        label="Link Instagram"
+        name="ig_link"
+        register={register}
+        errors={errors.ig_link}
+        addClass="col-span-2"
+      />
+      {/* tiktok_link */}
+      <InputText
+        label="Link Tiktok"
+        name="tiktok_link"
+        register={register}
+        errors={errors.tiktok_link}
+        addClass="col-span-2"
+      />
     </>
   );
 };

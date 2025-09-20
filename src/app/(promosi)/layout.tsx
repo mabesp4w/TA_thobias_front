@@ -1,6 +1,7 @@
 /** @format */
 
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Promosi Produk UMKM | Platform UMKM Indonesia",
@@ -51,6 +52,8 @@ export default function PromosiLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // redirect to auth/login
+  redirect("/auth/login");
   return (
     <>
       {/* Main content */}

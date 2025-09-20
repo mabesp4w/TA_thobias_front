@@ -35,6 +35,11 @@ const Form = ({ dtEdit, halaman }: Props) => {
     setValue("alamat", "");
     setValue("tlp", "");
     setValue("desc_bisnis", "");
+    setValue("fb_link", "");
+    setValue("ig_link", "");
+    setValue("tiktok_link", "");
+    setValue("total_laki", 0);
+    setValue("total_perempuan", 0);
   };
 
   useEffect(() => {
@@ -44,6 +49,11 @@ const Form = ({ dtEdit, halaman }: Props) => {
       setValue("alamat", dtEdit.alamat);
       setValue("tlp", dtEdit.tlp);
       setValue("desc_bisnis", dtEdit.desc_bisnis);
+      setValue("fb_link", dtEdit.fb_link);
+      setValue("ig_link", dtEdit.ig_link);
+      setValue("tiktok_link", dtEdit.tiktok_link);
+      setValue("total_laki", dtEdit.total_laki);
+      setValue("total_perempuan", dtEdit.total_perempuan);
     } else {
       resetForm();
     }

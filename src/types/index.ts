@@ -36,6 +36,9 @@ export interface ProfilUMKMType {
   tgl_bergabung: string; // DateTime
   total_laki?: number; // Optional
   total_perempuan?: number; // Optional
+  fb_link?: string; // Optional
+  ig_link?: string; // Optional
+  tiktok_link?: string; // Optional
   user_detail?: UserType;
 }
 

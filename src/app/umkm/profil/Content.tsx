@@ -75,6 +75,40 @@ const Content = () => {
                 <p className="font-bold">Alamat</p>
                 <p>{profilData.alamat || "-"}</p>
               </div>
+              {profilData.fb_link && (
+                <div>
+                  <a
+                    href={profilData.fb_link}
+                    target="_blank"
+                    className="font-bold text-blue-500 hover:text-blue-600 transition-colors underline"
+                  >
+                    Link Facebook
+                  </a>
+                </div>
+              )}
+              {profilData.ig_link && (
+                <div>
+                  <a
+                    href={profilData.ig_link}
+                    target="_blank"
+                    className="font-bold"
+                  >
+                    Link Instagram
+                  </a>
+                </div>
+              )}
+              {profilData.tiktok_link && (
+                <div>
+                  <a
+                    href={profilData.tiktok_link}
+                    target="_blank"
+                    className="font-bold"
+                  >
+                    Link Tiktok
+                  </a>
+                </div>
+              )}
+
               <div className="md:col-span-2">
                 <p className="font-bold">Deskripsi Bisnis</p>
                 <p>{profilData.desc_bisnis || "-"}</p>
