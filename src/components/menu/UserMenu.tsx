@@ -207,7 +207,7 @@ const UserMenu = () => {
         <div className="p-4 border-t border-base-300 flex flex-col">
           {/* akun */}
           <Link
-            href="/akun"
+            href="/umkm/akun"
             className="flex items-center gap-3 hover:bg-base-200 pl-4"
           >
             <UserPen className="h-5 w-5" />
