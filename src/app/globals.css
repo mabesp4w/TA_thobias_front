@@ -121,3 +121,41 @@
   mix-blend-mode: multiply;
   border-radius: 3px;
 }
+
+/* Dark theme input styling */
+.dark input,
+.dark textarea,
+.dark select {
+  color: #f1f5f9;
+  background-color: #1e293b;
+  border-color: #475569;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #8b5cf6;
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+/* Ensure input text is visible in dark mode */
+.dark .input,
+.dark .textarea,
+.dark .select {
+  color: #f1f5f9;
+  background-color: #1e293b;
+  border-color: #475569;
+}
+
+.dark .input:focus,
+.dark .textarea:focus,
+.dark .select:focus {
+  border-color: #8b5cf6;
+  outline-color: #8b5cf6;
+}
