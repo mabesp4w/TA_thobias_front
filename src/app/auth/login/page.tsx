@@ -11,13 +11,32 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import FormLogin from "./FormLogin";
 import Link from "next/link";
 
 type Inputs = {
-  email: string;
-  password: string | number;
+  username: string;
+  password: string;
 };
+
+// Schema validasi dengan Yup dan pesan error dalam bahasa Indonesia
+const schema = yup.object({
+  username: yup
+    .string()
+    .required("Email tidak boleh kosong")
+    .email("Format email tidak valid")
+    .min(2, "Email tidak boleh kurang dari 2 karakter")
+    .matches(
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      "Format email tidak valid"
+    ),
+  password: yup
+    .string()
+    .required("Password tidak boleh kosong")
+    .min(3, "Password tidak boleh kurang dari 3 karakter"),
+});
 
 const Login = () => {
   // store
@@ -58,14 +77,18 @@ const Login = () => {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({
+    resolver: yupResolver(schema),
+    mode: 'onChange', // Validate on change
+    reValidateMode: 'onChange'
+  });
 
   const onSubmit: SubmitHandler<Inputs> = async (row) => {
     setIsLoading(true);
     setError("");
     const res = await setLogin(row);
     if (res?.error) {
-      setError(res?.error?.detail);
+      setError("Email atau password salah");
     } else {
       const { data } = res;
       Cookies.set("token", data.access_token, { expires: 7 });
@@ -85,7 +108,6 @@ const Login = () => {
     }
   };
 
-  console.log({ error });
   return (
     <div className="min-h-screen bg-1 bg-cover bg-center font-prompt">
       <div className="flex flex-col items-center min-h-screen justify-center backdrop-blur-sm bg-black/50 z-10">
@@ -122,7 +144,6 @@ const Login = () => {
                 <button
                   type="submit"
                   className="btn btn-primary w-full"
-                  onClick={handleSubmit(onSubmit)}
                 >
                   Login
                 </button>

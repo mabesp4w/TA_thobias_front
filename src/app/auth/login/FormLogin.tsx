@@ -1,6 +1,7 @@
 /** @format */
 "use client";
-import InputText from "@/components/input/InputText";
+import InputEmail from "@/components/input/InputEmail";
+import InputPassword from "@/components/input/InputPassword";
 import { FC } from "react";
 
 type Props = {
@@ -14,26 +15,22 @@ type Props = {
 const FormLogin: FC<Props> = ({ register, errors }) => {
   return (
     <div className="flex flex-col gap-y-2">
-      <InputText
+      <InputEmail
         label="Email"
         name="username"
         register={register}
         required
-        minLength={2}
-        errors={errors.email}
+        errors={errors.username}
         addClass="col-span-4"
-        type="email"
-        labelClass="text-black "
+        labelClass="text-black"
         placeholder="Masukan Email"
       />
-      <InputText
+      <InputPassword
         label="Password"
         name="password"
         register={register}
         required
-        minLength={3}
         errors={errors.password}
-        type="password"
         labelClass="text-black"
         placeholder="Masukan Password"
       />

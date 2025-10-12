@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 // type data login
 interface dataLogin {
   name?: string;
-  email?: string;
+  username?: string;
   password?: string | number;
   password_confirmation?: string;
   client_id?: string;
